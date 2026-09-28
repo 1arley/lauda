@@ -1,0 +1,117 @@
+<div class="mb-8">
+  <%= link_to assessments_path, class: "text-sm text-gray-500 hover:text-gray-700" do %>
+    &larr; Voltar para Avaliações
+  <% end %>
+  <div class="mt-2 flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900"><%= @assessment.title %></h1>
+      <p class="mt-1 text-sm text-gray-500">
+        <%= @assessment.patient.name %> &middot;
+        <%= @assessment.owner.name %> &middot;
+        <%= @assessment.created_at.strftime("%d/%m/%Y") %>
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <%= render "shared/status_badge", status: @assessment.status %>
+      <% if @assessment.draft? || @assessment.in_progress? %>
+        <%= link_to finalize_assessment_path(@assessment), data: { turbo_method: :post, turbo_confirm: "Finalizar esta avaliação?" }, class: "rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-500" do %>
+          Finalizar
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if @assessment.context.present? %>
+  <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-4 mb-6">
+    <h3 class="text-sm font-medium text-gray-500 uppercase mb-1">Contexto</h3>
+    <p class="text-sm text-gray-900 whitespace-pre-line"><%= @assessment.context %></p>
+  </div>
+<% end %>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div class="lg:col-span-2">
+    <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+      <div class="px-4 py-5 sm:px-6 border-b border-gray-200 flex items-center justify-between">
+        <h2 class="text-lg font-medium text-gray-900">Instrumentos</h2>
+        <% unless @assessment.final? || @assessment.archived? %>
+          <%= link_to new_assessment_instrument_application_path(@assessment), class: "inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-2 text-sm font-medium text-gray-700 border border-gray-300 hover:bg-gray-50" do %>
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+            Adicionar
+          <% end %>
+        <% end %>
+      </div>
+
+      <% if @instrument_applications.any? %>
+        <ul class="divide-y divide-gray-200">
+          <% @instrument_applications.each do |app| %>
+            <li class="px-4 py-4 hover:bg-gray-50">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-900"><%= app.instrument_version.display_name %></p>
+                  <p class="text-xs text-gray-500">
+                    Aplicado por: <%= app.applied_by.name %>
+                    <% if app.scored_at %>
+                      &middot; Calculado em: <%= app.scored_at.strftime("%d/%m/%Y %H:%M") %>
+                    <% end %>
+                  </p>
+                </div>
+                <div class="flex items-center gap-3">
+                  <%= render "shared/status_badge", status: app.status %>
+                  <% unless @assessment.final? %>
+                    <div class="flex gap-1">
+                      <% if app.pending? || app.answered? %>
+                        <%= link_to "Responder", edit_answers_assessment_instrument_application_path(@assessment, app), class: "text-xs text-blue-600 hover:text-blue-800" %>
+                      <% end %>
+                      <% if app.answered? %>
+                        <%= link_to "Calcular", score_assessment_instrument_application_path(@assessment, app), class: "text-xs text-green-600 hover:text-green-800" %>
+                      <% end %>
+                      <% if app.scored? %>
+                        <%= link_to "Resultados", results_assessment_instrument_application_path(@assessment, app), class: "text-xs text-purple-600 hover:text-purple-800" %>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="px-4 py-8 text-center text-sm text-gray-500">
+          Nenhum instrumento adicionado
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div>
+    <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+      <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">Laudos</h2>
+      </div>
+      <% if @reports.any? %>
+        <ul class="divide-y divide-gray-200">
+          <% @reports.each do |report| %>
+            <li class="px-4 py-3 hover:bg-gray-50">
+              <%= link_to assessment_report_path(@assessment, report), class: "block" do %>
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-medium text-gray-900"><%= report.report_template.name %></p>
+                  <%= render "shared/status_badge", status: report.status %>
+                </div>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="px-4 py-8 text-center text-sm text-gray-500">
+          Nenhum laudo criado
+        </div>
+      <% end %>
+      <% unless @assessment.final? %>
+        <div class="px-4 py-3 border-t border-gray-200">
+          <%= link_to "Novo Laudo", new_assessment_report_path(@assessment), class: "w-full inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

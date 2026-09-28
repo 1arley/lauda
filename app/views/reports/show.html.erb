@@ -1,0 +1,37 @@
+<div class="mb-8">
+  <%= link_to assessment_path(@assessment), class: "text-sm text-gray-500 hover:text-gray-700" do %>
+    &larr; Voltar para Avaliação
+  <% end %>
+  <div class="mt-2 flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900"><%= @report.report_template.name %></h1>
+      <p class="mt-1 text-sm text-gray-500">
+        <%= @assessment.patient.name %> &middot;
+        Criado em: <%= @report.created_at.strftime("%d/%m/%Y %H:%M") %>
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <%= render "shared/status_badge", status: @report.status %>
+      <% unless @report.final? %>
+        <%= link_to "Editar", edit_assessment_report_path(@assessment, @report), class: "rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 hover:bg-gray-50" %>
+      <% end %>
+      <% if @report.final? %>
+        <%= link_to export_pdf_assessment_report_path(@assessment, @report), data: { turbo_method: :post }, class: "rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500" do %>
+          Exportar PDF
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="bg-white shadow-sm rounded-lg border border-gray-200">
+  <div class="p-6 space-y-6">
+    <% @report.sections.each do |section| %>
+      <div>
+        <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-2"><%= section["title"] %></h3>
+        <div class="prose prose-sm max-w-none text-gray-700 whitespace-pre-line"><%= section["content"] %></div>
+      </div>
+      <hr class="border-gray-200">
+    <% end %>
+  </div>
+</div>

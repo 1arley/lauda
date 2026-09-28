@@ -1,0 +1,82 @@
+<div class="max-w-5xl">
+  <div class="mb-8">
+    <%= link_to assessment_path(@assessment), class: "text-sm text-gray-500 hover:text-gray-700" do %>
+      &larr; Voltar para Avaliação
+    <% end %>
+    <div class="mt-2 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Editor de Laudo</h1>
+        <p class="mt-1 text-sm text-gray-500"><%= @assessment.patient.name %></p>
+      </div>
+      <%= render "shared/status_badge", status: @report.status %>
+    </div>
+  </div>
+
+  <%= form_with(model: [@assessment, @report], data: { controller: "report-editor", "report-editor-patient-name-value": @assessment.patient.name, "report-editor-patient-age-value": @assessment.patient.age&.to_s, "report-editor-patient-birth-date-value": @assessment.patient.birth_date&.strftime("%d/%m/%Y"), "report-editor-title-value": @assessment.title }) do |f| %>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 space-y-6">
+        <% @report.sections.each_with_index do |section, index| %>
+          <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+            <div class="px-4 py-3 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+              <h3 class="text-sm font-semibold text-gray-900"><%= section["title"] %></h3>
+            </div>
+            <div class="p-4">
+              <%= f.hidden_field "sections[#{index}][title]", value: section["title"] %>
+              <%= f.hidden_field "sections[#{index}][section_type]", value: section["section_type"] %>
+              <%= f.text_area "sections[#{index}][content]", value: section["content"], rows: 8,
+                data: { "report-editor-target": "content", "action": "input->report-editor#updatePreview" },
+                class: "block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 font-mono" %>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="flex items-center gap-3">
+          <%= f.submit "Salvar rascunho", class: "rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 cursor-pointer" %>
+          <% unless @report.final? %>
+            <%= link_to "Finalizar laudo", finalize_assessment_report_path(@assessment, @report), data: { turbo_method: :post, turbo_confirm: "Tem certeza? O laudo será bloqueado para edição." }, class: "rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-500" %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+          <div class="px-4 py-3 border-b border-gray-200">
+            <h3 class="text-sm font-medium text-gray-900">Variáveis</h3>
+          </div>
+          <div class="p-4 space-y-2">
+            <% %w[{{nome_paciente}} {{idade}} {{data_nascimento}} {{titulo_avaliacao}}].each do |v| %>
+              <button type="button" data-action="click->report-editor#insertVariable" data-variable="<%= v %>" class="w-full text-left px-3 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 font-mono text-gray-700">
+                <%= v %>
+              </button>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+          <div class="px-4 py-3 border-b border-gray-200">
+            <h3 class="text-sm font-medium text-gray-900">Snippets</h3>
+          </div>
+          <div class="p-4 space-y-2 max-h-64 overflow-y-auto">
+            <% @snippets.each do |snippet| %>
+              <button type="button" data-action="click->report-editor#insertSnippet" data-content="<%= snippet.content %>" class="w-full text-left px-3 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50">
+                <span class="font-medium text-gray-900"><%= snippet.title %></span>
+                <span class="block text-xs text-gray-500 truncate mt-0.5"><%= snippet.content.first(60) %></span>
+              </button>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+          <div class="px-4 py-3 border-b border-gray-200">
+            <h3 class="text-sm font-medium text-gray-900">Preview</h3>
+          </div>
+          <div class="p-4">
+            <div data-report-editor-target="preview" class="text-sm text-gray-700 prose prose-sm max-w-none">
+              <p class="text-gray-400 italic">Pré-visualização aparecerá aqui...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,48 @@
+Rails.application.routes.draw do
+  devise_for :users, controllers: {
+    sessions: 'users/sessions',
+    registrations: 'users/registrations',
+    passwords: 'users/passwords'
+  }
+
+  root 'dashboard#index'
+
+  resources :patients
+
+  resources :assessments do
+    member do
+      post :finalize
+    end
+
+    resources :instrument_applications, path: 'instruments' do
+      member do
+        get :edit_answers
+        patch :update_answers
+        get :score
+        post :compute
+        get :results
+      end
+    end
+
+    resources :reports, only: %i[new create show edit update] do
+      member do
+        post :finalize
+        post :export_pdf
+      end
+    end
+  end
+
+  resources :report_templates
+
+  resources :snippets, only: %i[index new create edit update destroy]
+
+  resources :export_jobs, only: %i[index show]
+
+  namespace :admin do
+    resources :users, only: %i[index new create edit update]
+    resources :instruments, only: %i[index new create edit update]
+    resource :tenant, only: %i[show edit update]
+  end
+
+  get 'up' => 'rails/health#show', as: :rails_health_check
+end

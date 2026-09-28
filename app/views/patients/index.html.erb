@@ -1,0 +1,59 @@
+<div class="sm:flex sm:items-center sm:justify-between mb-8">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900">Pacientes</h1>
+    <p class="mt-1 text-sm text-gray-500">Gerencie os pacientes cadastrados</p>
+  </div>
+  <div class="mt-4 sm:mt-0">
+    <%= link_to new_patient_path, class: "inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500" do %>
+      <svg class="-ml-0.5 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+      Novo Paciente
+    <% end %>
+  </div>
+</div>
+
+<div class="bg-white shadow-sm rounded-lg border border-gray-200">
+  <div class="px-4 py-3 border-b border-gray-200">
+    <%= search_form_for @q, url: patients_path, class: "flex gap-3" do |f| %>
+      <div class="flex-1">
+        <%= f.search_field :name_cont, placeholder: "Buscar por nome...", class: "block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" %>
+      </div>
+      <%= f.submit "Buscar", class: "rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200" %>
+    <% end %>
+  </div>
+
+  <% if @patients.any? %>
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nome</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Idade</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">CPF</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Avaliações</th>
+          <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Ações</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 bg-white">
+        <% @patients.each do |patient| %>
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3">
+              <%= link_to patient.name, patient_path(patient), class: "text-sm font-medium text-gray-900 hover:text-blue-600" %>
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-500">
+              <%= patient.age ? "#{patient.age} anos" : "-" %>
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-500">
+              <%= patient.cpf ? patient.cpf.gsub(/(\d{3})(\d{3})(\d{3})(\d{2})/, '\1.\2.\3-\4') : "-" %>
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-500"><%= patient.assessments.count %></td>
+            <td class="px-4 py-3 text-right">
+              <%= link_to "Editar", edit_patient_path(patient), class: "text-sm text-gray-600 hover:text-gray-900" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= render "shared/pagination", pagy: @pagy %>
+  <% else %>
+    <%= render "shared/empty_state", title: "Nenhum paciente", message: "Cadastre o primeiro paciente para começar." %>
+  <% end %>
+</div>

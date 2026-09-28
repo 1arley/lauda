@@ -1,0 +1,81 @@
+<div class="mb-8">
+  <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+  <p class="mt-1 text-sm text-gray-500">Visão geral da plataforma</p>
+</div>
+
+<div class="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
+  <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200 px-4 py-5 sm:p-6">
+    <dt class="text-sm font-medium text-gray-500 truncate">Total de Pacientes</dt>
+    <dd class="mt-1 text-3xl font-semibold text-gray-900"><%= @stats[:total_patients] %></dd>
+  </div>
+  <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200 px-4 py-5 sm:p-6">
+    <dt class="text-sm font-medium text-gray-500 truncate">Avaliações Ativas</dt>
+    <dd class="mt-1 text-3xl font-semibold text-blue-600"><%= @stats[:active_assessments] %></dd>
+  </div>
+  <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200 px-4 py-5 sm:p-6">
+    <dt class="text-sm font-medium text-gray-500 truncate">Laudos Pendentes</dt>
+    <dd class="mt-1 text-3xl font-semibold text-yellow-600"><%= @stats[:pending_reports] %></dd>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+    <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">Avaliações Recentes</h2>
+    </div>
+    <div class="divide-y divide-gray-200">
+      <% if @active_assessments.any? %>
+        <% @active_assessments.each do |assessment| %>
+          <div class="px-4 py-4 hover:bg-gray-50">
+            <%= link_to assessment_path(assessment), class: "block" do %>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-900"><%= assessment.title %></p>
+                  <p class="text-sm text-gray-500"><%= assessment.patient.name %> &middot; <%= assessment.owner.name %></p>
+                </div>
+                <%= render "shared/status_badge", status: assessment.status %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="px-4 py-8 text-center text-sm text-gray-500">
+          Nenhuma avaliação ativa
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+    <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">Pacientes Recentes</h2>
+    </div>
+    <div class="divide-y divide-gray-200">
+      <% if @recent_patients.any? %>
+        <% @recent_patients.each do |patient| %>
+          <div class="px-4 py-4 hover:bg-gray-50">
+            <%= link_to patient_path(patient), class: "block" do %>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-900"><%= patient.name %></p>
+                  <p class="text-sm text-gray-500">
+                    <% if patient.birth_date %>
+                      <%= patient.age %> anos
+                    <% else %>
+                      Sem data de nascimento
+                    <% end %>
+                  </p>
+                </div>
+                <span class="text-sm text-gray-500"><%= patient.assessments.count %> avaliações</span>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="px-4 py-8 text-center text-sm text-gray-500">
+          Nenhum paciente cadastrado
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

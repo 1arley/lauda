@@ -1,0 +1,40 @@
+services:
+  db_test:
+    image: postgres:16-alpine
+    restart: "no"
+    tmpfs:
+      - /var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    restart: "no"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db_test:5432/laudos_saas_test
+      RAILS_ENV: test
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY:-}
+    depends_on:
+      db_test:
+        condition: service_healthy
+    command: >
+      sh -c "
+        bin/rails db:create db:migrate &&
+        bundle exec rspec
+      "
+    volumes:
+      - .:/rails
+      - bundle:/usr/local/bundle
+
+volumes:
+  bundle:

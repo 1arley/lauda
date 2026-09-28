@@ -1,0 +1,32 @@
+class AssessmentPolicy < ApplicationPolicy
+  def index? = true
+  def show? = same_tenant?
+  def create? = professional_or_above?
+  def update? = owner_or_admin?
+  def destroy? = tenant_admin_or_above?
+  def finalize? = owner_or_admin?
+
+  class Scope < ApplicationPolicy::Scope
+    def resolve
+      scope.where(tenant_id: user.tenant_id)
+    end
+  end
+
+  private
+
+  def same_tenant?
+    record.tenant_id == user.tenant_id
+  end
+
+  def professional_or_above?
+    same_tenant? && (user.saas_admin? || user.tenant_admin? || user.professional?)
+  end
+
+  def owner_or_admin?
+    same_tenant? && (user.saas_admin? || user.tenant_admin? || record.owner_id == user.id)
+  end
+
+  def tenant_admin_or_above?
+    same_tenant? && (user.saas_admin? || user.tenant_admin?)
+  end
+end

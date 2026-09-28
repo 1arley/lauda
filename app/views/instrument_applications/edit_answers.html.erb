@@ -1,0 +1,45 @@
+<div class="mb-8">
+  <%= link_to assessment_path(@assessment), class: "text-sm text-gray-500 hover:text-gray-700" do %>
+    &larr; Voltar para Avaliação
+  <% end %>
+  <div class="mt-2">
+    <h1 class="text-2xl font-bold text-gray-900">Lançar Respostas</h1>
+    <p class="mt-1 text-sm text-gray-500"><%= @instrument_application.instrument_version.display_name %></p>
+  </div>
+</div>
+
+<%= form_with url: update_answers_assessment_instrument_application_path(@assessment, @instrument_application), method: :patch, data: { controller: "score-calculator" }, class: "space-y-6" do |f| %>
+  <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-6">
+    <p class="text-sm text-gray-500 mb-4">
+      Insira os escores brutos para cada subteste. O total será calculado automaticamente.
+    </p>
+
+    <div class="space-y-4">
+      <% subtests = @instrument_application.instrument_version.scoring_config["subtests"] || ["Subteste 1", "Subteste 2", "Subteste 3"] %>
+      <% subtests.each_with_index do |subtest, index| %>
+        <% existing = @instrument_application.answer_sets.find_by(subtest_name: subtest) %>
+        <div class="flex items-center gap-4">
+          <label class="w-48 text-sm font-medium text-gray-700 shrink-0"><%= subtest %></label>
+          <%= f.fields_for "answer_sets[#{index}]", OpenStruct.new(subtest_name: subtest, answers: existing&.answers || {}, position: index) do |af| %>
+            <%= af.hidden_field :subtest_name %>
+            <%= af.hidden_field :position %>
+            <div class="flex gap-2 flex-1">
+              <% item_count = @instrument_application.instrument_version.scoring_config["items_per_subtest"] || 5 %>
+              <% item_count.times do |i| %>
+                <%= af.number_field "answers[#{i}]", value: existing&.answers&.dig(i.to_s), min: 0, max: 99, class: "w-16 rounded-lg border border-gray-300 px-2 py-2 text-sm text-center shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500", data: { action: "input->score-calculator#calculate" } %>
+              <% end %>
+              <span class="ml-2 text-sm text-gray-500 flex items-center">
+                Total: <span data-score-calculator-target="output" class="ml-1 font-medium text-gray-900">0</span>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <%= f.submit "Salvar e calcular", class: "rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 cursor-pointer" %>
+    <%= link_to "Cancelar", assessment_path(@assessment), class: "rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100" %>
+  </div>
+<% end %>

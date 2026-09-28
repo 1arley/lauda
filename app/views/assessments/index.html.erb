@@ -1,0 +1,51 @@
+<div class="sm:flex sm:items-center sm:justify-between mb-8">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900">Avaliações</h1>
+    <p class="mt-1 text-sm text-gray-500">Gerencie as avaliações psicológicas</p>
+  </div>
+  <div class="mt-4 sm:mt-0">
+    <%= link_to new_assessment_path, class: "inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500" do %>
+      <svg class="-ml-0.5 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+      Nova Avaliação
+    <% end %>
+  </div>
+</div>
+
+<div class="bg-white shadow-sm rounded-lg border border-gray-200">
+  <div class="px-4 py-3 border-b border-gray-200 flex gap-3">
+    <%= link_to "Todas", assessments_path, class: "text-sm px-3 py-1.5 rounded-lg #{params[:status].blank? ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100'}" %>
+    <% %w[draft in_progress review final].each do |s| %>
+      <%= link_to s.humanize, assessments_path(status: s), class: "text-sm px-3 py-1.5 rounded-lg #{params[:status] == s ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100'}" %>
+    <% end %>
+  </div>
+
+  <% if @assessments.any? %>
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Título</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Paciente</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Responsável</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Criado em</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        <% @assessments.each do |assessment| %>
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3">
+              <%= link_to assessment.title, assessment_path(assessment), class: "text-sm font-medium text-gray-900 hover:text-blue-600" %>
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-500"><%= assessment.patient.name %></td>
+            <td class="px-4 py-3"><%= render "shared/status_badge", status: assessment.status %></td>
+            <td class="px-4 py-3 text-sm text-gray-500"><%= assessment.owner.name %></td>
+            <td class="px-4 py-3 text-sm text-gray-500"><%= assessment.created_at.strftime("%d/%m/%Y") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= render "shared/pagination", pagy: @pagy %>
+  <% else %>
+    <%= render "shared/empty_state", title: "Nenhuma avaliação", message: "Crie a primeira avaliação para começar." %>
+  <% end %>
+</div>

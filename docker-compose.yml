@@ -27,6 +27,7 @@ services:
       - bundle:/usr/local/bundle
     environment:
       DATABASE_URL: postgres://postgres:postgres@db:5432/laudos_saas_production
+      DB_HOST: db
       RAILS_ENV: production
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:-d8d189adbab97dd74e84c258aff0c335}
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY:-}

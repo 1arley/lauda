@@ -22,6 +22,7 @@ services:
     restart: "no"
     environment:
       DATABASE_URL: postgres://postgres:postgres@db_test:5432/laudos_saas_test
+      DB_HOST: db_test
       RAILS_ENV: test
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY:-}
     depends_on:

@@ -22,6 +22,7 @@ gem 'tzinfo-data', platforms: %i[windows jruby]
 # Auth & Authorization
 gem 'devise'
 gem 'devise-jwt'
+gem 'dotenv-rails', groups: %i[development test]
 gem 'pundit'
 
 # Multi-tenant

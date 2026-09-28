@@ -21,6 +21,7 @@ module LaudosSaas
     end
 
     config.active_job.queue_adapter = :solid_queue
-    config.solid_queue.connects_to = { database: { writing: :queue } }
+    # test é single-db (config/database.yml), então não há conexão :queue separada lá.
+    config.solid_queue.connects_to = { database: { writing: :queue } } unless Rails.env.test?
   end
 end

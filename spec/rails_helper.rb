@@ -4,6 +4,12 @@ require_relative '../config/environment'
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
 require 'simplecov'
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
+end
 SimpleCov.start 'rails' do
   add_filter '/spec/'
   add_filter '/config/'
@@ -23,6 +29,7 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
 
   config.include FactoryBot::Syntax::Methods
+  config.include Shoulda::Matchers, type: :model
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::IntegrationHelpers, type: :request
 end

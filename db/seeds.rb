@@ -61,7 +61,7 @@ instruments_data.each do |data|
       scores: (0..20).map do |raw|
         {
           min: raw, max: raw,
-          scaled: [1, [raw + 1, 19].min].max,
+          scaled: (raw + 1).clamp(1, 19),
           percentile: [(raw * 4.5), 0.1].max,
           classification: if raw < 5
                             'Muito baixo'

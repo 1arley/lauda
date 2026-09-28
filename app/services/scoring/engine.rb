@@ -39,7 +39,9 @@ module Scoring
     private
 
     def find_calculator
-      class_name = @instrument.code.camelize
+      # 'WISC-IV'.camelize devolve 'WISC-IV' (nada é transformado), então normaliza para
+      # minúsculas com '_' e casa com WiscIvCalculator / Srs2Calculator. Sem match → Generic.
+      class_name = @instrument.code.downcase.tr('-', '_').camelize
       "Scoring::Calculators::#{class_name}Calculator".constantize
     rescue NameError
       Scoring::Calculators::GenericCalculator

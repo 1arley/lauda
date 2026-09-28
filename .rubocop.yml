@@ -17,12 +17,20 @@ AllCops:
 
 Layout/LineLength:
   Max: 120
-
-Metrics/MethodLength:
-  Max: 20
+  Exclude:
+    # Dados de seed (strings longas de conteúdo)
+    - "db/seeds.rb"
 
 Metrics/AbcSize:
   Max: 25
+  Exclude:
+    - "app/services/**/*"
+
+Metrics/MethodLength:
+  Max: 20
+  Exclude:
+    - "app/services/**/*"
+    - "db/seeds.rb"
 
 Metrics/CyclomaticComplexity:
   Max: 10
@@ -48,14 +56,8 @@ Metrics/BlockLength:
     - "config/routes.rb"
     - "db/seeds.rb"
 
-Metrics/AbcSize:
-  Exclude:
-    - "app/services/**/*"
-
-Metrics/MethodLength:
-  Exclude:
-    - "app/services/**/*"
-    - "db/seeds.rb"
-
 Rails/LexicallyScopedActionFilter:
   Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 10

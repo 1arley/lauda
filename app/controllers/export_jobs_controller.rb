@@ -9,7 +9,8 @@ class ExportJobsController < ApplicationController
     authorize @export_job
 
     if @export_job.completed?
-      redirect_to @export_job.file_url, allow_other_host: true
+      # file_url é caminho relativo gerado pelo PdfExportJob (mesmo host).
+      redirect_to @export_job.file_url
     else
       redirect_to export_jobs_path, notice: 'Exportação ainda em processamento.'
     end

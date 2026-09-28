@@ -38,3 +38,7 @@
 # Local knowledge graph (generated).
 /graphify-out/
 
+# Test / coverage output.
+/coverage/
+/spec/examples.txt
+

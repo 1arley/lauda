@@ -1,0 +1,9 @@
+{
+  "ignored_warnings": [
+    {
+      "fingerprint": "79e43c3362dd37095d7844af66cc8de14da79e3f4fa3fe95fbfd8eb662565220",
+      "note": "Falso positivo: o nome do arquivo é laudo_<report.id>_<timestamp>.pdf e report.id é UUID gerado pelo Postgres (gen_random_uuid), sem entrada do usuário. file_url persistido é caminho relativo /storage/exports/."
+    }
+  ],
+  "brakeman_version": "8.0.6"
+}

@@ -13,17 +13,20 @@ RSpec.describe Scoring::Engine do
   end
 
   before do
-    ActsAsTenant.tenant_id = tenant.id
+    ActsAsTenant.current_tenant = tenant
     create(:answer_set, instrument_application: app, subtest_name: 'Semelhanças',
                         answers: { '1' => 3, '2' => 2, '3' => 4 })
     create(:answer_set, instrument_application: app, subtest_name: 'Cubos', answers: { '1' => 4, '2' => 3, '3' => 2 })
   end
 
+  after { ActsAsTenant.current_tenant = nil }
+
   describe '#compute!' do
-    it 'creates score results each answer set' do
+    it 'creates score results for each answer set plus composites' do
+      # WISC-IV tem calculadora própria: 2 subtestes + 2 composites = 4 resultados.
       expect do
         described_class.new(app).compute!(normative_table_id: normative_table.id)
-      end.to change(ScoreResult, :count).by(2)
+      end.to change(ScoreResult, :count).by(4)
     end
 
     it 'updates instrument application status to scored' do

@@ -37,7 +37,7 @@ gem 'acts_as_tenant'
 gem 'discard'
 
 # Pagination
-gem 'pagy', '~> 9.0'
+gem 'pagy', '~> 43.6'
 
 # Search
 gem 'ransack'

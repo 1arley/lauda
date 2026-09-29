@@ -35,11 +35,7 @@ services:
       APP_HOST: ${APP_HOST:?Defina APP_HOST no .env}
       APP_PROTOCOL: https
       MAILER_SENDER: ${MAILER_SENDER:?Defina MAILER_SENDER no .env}
-      SMTP_ADDRESS: ${SMTP_ADDRESS:?Defina SMTP_ADDRESS no .env}
-      SMTP_PORT: ${SMTP_PORT:-587}
-      SMTP_USER_NAME: ${SMTP_USER_NAME:?Defina SMTP_USER_NAME no .env}
-      SMTP_PASSWORD: ${SMTP_PASSWORD:?Defina SMTP_PASSWORD no .env}
-      SMTP_DOMAIN: ${SMTP_DOMAIN:?Defina SMTP_DOMAIN no .env}
+      RESEND_API_KEY: ${RESEND_API_KEY:?Defina RESEND_API_KEY no .env}
       STORAGE_SERVICE: local
       SOLID_QUEUE_IN_PUMA: "true"
       PORT: 80

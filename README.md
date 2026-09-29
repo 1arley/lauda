@@ -24,7 +24,7 @@ openssl rand -hex 64 # SECRET_KEY_BASE
 openssl rand -hex 24 # POSTGRES_PASSWORD
 ```
 
-Configure também o domínio, um remetente e as credenciais SMTP. SMTP é necessário para confirmar cadastros e recuperar senhas; com Resend, `SMTP_ADDRESS` é `smtp.resend.com`, `SMTP_USER_NAME` é `resend` e `SMTP_PASSWORD` é a API key, e o remetente precisa pertencer a um domínio verificado no Resend. O primeiro usuário cria a clínica e vira seu administrador; não há conta demo nem senha compartilhada. Confirmação de e-mail fica ativa.
+Configure também o domínio, um remetente e a credencial da Resend. O e-mail de confirmação de cadastro e o de recuperação de senha saem pela API HTTP da Resend (`RESEND_API_KEY` + `MAILER_SENDER`), não por SMTP: o egress das portas 25/465/587 está bloqueado no host da VPS, enquanto `api.resend.com:443` responde, e é assim que os demais apps da mesma VPS enviam. Crie a chave em resend.com/api-keys com acesso de envio; o remetente precisa pertencer a um domínio verificado no Resend. O primeiro usuário cria a clínica e vira seu administrador; não há conta demo nem senha compartilhada. Confirmação de e-mail fica ativa.
 
 Os PDFs usam Solid Queue persistido no PostgreSQL e rodam no mesmo container Rails. Volumes Docker preservam os dados durante atualizações; mantenha backups externos do PostgreSQL e de `app_storage`.
 

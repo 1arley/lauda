@@ -60,17 +60,10 @@ Rails.application.configure do
     config.hosts << ENV.fetch('APP_HOST')
   end
 
-  if ENV['SMTP_ADDRESS'].present?
-    config.action_mailer.delivery_method = :smtp
-    config.action_mailer.smtp_settings = {
-      address: ENV.fetch('SMTP_ADDRESS'),
-      port: ENV.fetch('SMTP_PORT', 587).to_i,
-      domain: ENV.fetch('SMTP_DOMAIN'),
-      user_name: ENV.fetch('SMTP_USER_NAME'),
-      password: ENV.fetch('SMTP_PASSWORD'),
-      authentication: :plain,
-      enable_starttls_auto: true
-    }
+  # E-mail pela API HTTP da Resend em vez de SMTP: o egress das portas
+  # 25/465/587 do host esta bloqueado, enquanto api.resend.com:443 responde.
+  if ENV['RESEND_API_KEY'].present?
+    config.action_mailer.delivery_method = :resend
     config.action_mailer.raise_delivery_errors = true
   end
 

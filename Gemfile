@@ -24,6 +24,12 @@ gem 'devise-jwt'
 gem 'dotenv-rails', groups: %i[development test]
 gem 'pundit'
 
+# E-mail pela API HTTP da Resend. SMTP nao serve nesta maquina: o egress das
+# portas 25/465/587 esta bloqueado no host, enquanto api.resend.com:443
+# responde. HentaisIce, AnimesIce e Mesa-Redonda, que rodam na mesma VPS, ja
+# enviam por aqui.
+gem 'resend', '~> 1.17'
+
 # Multi-tenant
 gem 'acts_as_tenant'
 

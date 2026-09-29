@@ -1,0 +1,4 @@
+Olá, <%= @email %>!
+
+Confirme seu endereço de e-mail para ativar sua conta no Lauda:
+<%= confirmation_url(@resource, confirmation_token: @token) %>

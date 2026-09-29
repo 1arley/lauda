@@ -1,0 +1,3 @@
+<p>Olá, <%= @email %>!</p>
+<p>Confirme seu endereço de e-mail para ativar sua conta no Lauda:</p>
+<p><%= link_to "Confirmar minha conta", confirmation_url(@resource, confirmation_token: @token) %></p>

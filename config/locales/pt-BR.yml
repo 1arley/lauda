@@ -1,0 +1,54 @@
+pt-BR:
+  devise:
+    confirmations:
+      confirmed: "Seu e-mail foi confirmado com sucesso."
+      send_instructions: "Você receberá um e-mail com instruções para confirmar sua conta em alguns minutos."
+      send_paranoid_instructions: "Se seu e-mail estiver cadastrado, você receberá instruções para confirmar sua conta em alguns minutos."
+    failure:
+      already_authenticated: "Você já está conectado."
+      inactive: "Sua conta ainda não foi ativada."
+      invalid: "E-mail ou senha inválidos."
+      locked: "Sua conta está bloqueada."
+      not_found_in_database: "E-mail ou senha inválidos."
+      timeout: "Sua sessão expirou. Entre novamente para continuar."
+      unauthenticated: "Entre ou crie uma conta para continuar."
+      unconfirmed: "Confirme seu e-mail para continuar."
+    mailer:
+      confirmation_instructions:
+        subject: "Confirme sua conta no Lauda"
+      reset_password_instructions:
+        subject: "Instruções para redefinir sua senha no Lauda"
+    passwords:
+      no_token: "O link de redefinição de senha está incompleto."
+      send_instructions: "Você receberá um e-mail com instruções para redefinir sua senha em alguns minutos."
+      send_paranoid_instructions: "Se seu e-mail estiver cadastrado, você receberá instruções para redefinir sua senha em alguns minutos."
+      updated: "Sua senha foi alterada com sucesso."
+      updated_not_active: "Sua senha foi alterada com sucesso."
+    registrations:
+      signed_up: "Conta criada com sucesso."
+      signed_up_but_unconfirmed: "Enviaremos um e-mail para confirmar sua conta."
+      updated: "Sua conta foi atualizada com sucesso."
+    sessions:
+      signed_in: "Login efetuado com sucesso."
+      signed_out: "Você saiu da sua conta."
+    errors:
+      messages:
+        already_confirmed: "já foi confirmado; tente entrar"
+        expired: "expirou; solicite um novo"
+        not_found: "não encontrado"
+        not_locked: "não estava bloqueado"
+        not_saved:
+          one: "1 erro impediu que %{resource} fosse salvo:"
+          other: "%{count} erros impediram que %{resource} fosse salvo:"
+  activerecord:
+    attributes:
+      user:
+        email: "E-mail"
+        password: "Senha"
+        password_confirmation: "Confirmação de senha"
+    errors:
+      messages:
+        blank: "não pode ficar em branco"
+        confirmation: "não corresponde"
+        invalid: "não é válido"
+        too_short: "é muito curta (mínimo de %{count} caracteres)"

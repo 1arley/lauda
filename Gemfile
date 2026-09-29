@@ -4,7 +4,7 @@ gem 'bootsnap', require: false
 gem 'image_processing', '~> 1.2'
 gem 'importmap-rails'
 gem 'jbuilder'
-gem 'json', '~> 2.9'
+gem 'json', '~> 3.0'
 gem 'pg', '~> 1.1'
 gem 'propshaft'
 gem 'puma', '>= 5.0'

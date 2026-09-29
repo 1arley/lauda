@@ -101,10 +101,6 @@ production:
     database: laudos_saas_production
     username: laudos_saas
     password: <%= ENV["LAUDOS_SAAS_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: laudos_saas_production_cache
-    migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
     database: laudos_saas_production_queue

@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :user do
     association :tenant
     name { Faker::Name.name }
-    email { Faker::Internet.email }
+    sequence(:email) { |n| "profissional#{n}@example.com" }
     password { 'password123' }
     password_confirmation { 'password123' }
     confirmed_at { Time.current }

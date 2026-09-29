@@ -11,7 +11,7 @@ module Scoring
 
       def calculate
         results = []
-        all_answers = answer_sets.flat_map(&:answers)
+        all_answers = answer_sets.each_with_object({}) { |set, acc| acc.merge!(set.answers) }
 
         DOMAINS.each do |domain_name, item_range|
           domain_answers = item_range.filter_map { |i| all_answers[i.to_s]&.to_i }

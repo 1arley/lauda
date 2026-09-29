@@ -15,10 +15,6 @@ module Scoring
 
       private
 
-      def total_raw_score
-        answer_sets.sum { |as| as.answers.values.sum.to_f }
-      end
-
       def lookup_score(raw_score, age: nil, education_level: nil)
         result = normative_table.lookup(
           raw_score: raw_score,

@@ -2,6 +2,7 @@ class AssessmentsController < ApplicationController
   before_action :set_assessment, only: %i[show edit update destroy finalize]
 
   def index
+    skip_authorization
     @assessments = policy_scope(Assessment)
     @assessments = @assessments.where(patient_id: params[:patient_id]) if params[:patient_id].present?
     @assessments = @assessments.where(status: params[:status]) if params[:status].present?

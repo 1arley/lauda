@@ -22,16 +22,10 @@ Rails.application.configure do
   # config.asset_host = "http://assets.example.com"
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
-
-  # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # config.assume_ssl = true
-
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
-
-  # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  config.active_storage.service = ENV.fetch('STORAGE_SERVICE', 'local').to_sym
+  config.assume_ssl = true
+  config.force_ssl = true
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == '/up' } } }
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [:request_id]
@@ -50,23 +44,35 @@ Rails.application.configure do
   # config.cache_store = :mem_cache_store
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
-  # config.active_job.queue_adapter = :resque
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: 'example.com' }
+  if ENV['APP_HOST'].present?
+    config.action_mailer.default_url_options = {
+      host: ENV.fetch('APP_HOST'),
+      protocol: ENV.fetch('APP_PROTOCOL', 'https')
+    }
+    config.hosts << ENV.fetch('APP_HOST')
+  end
 
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
-  # config.action_mailer.smtp_settings = {
-  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
-  #   password: Rails.application.credentials.dig(:smtp, :password),
-  #   address: "smtp.example.com",
-  #   port: 587,
-  #   authentication: :plain
-  # }
+  if ENV['SMTP_ADDRESS'].present?
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      address: ENV.fetch('SMTP_ADDRESS'),
+      port: ENV.fetch('SMTP_PORT', 587).to_i,
+      domain: ENV.fetch('SMTP_DOMAIN'),
+      user_name: ENV.fetch('SMTP_USER_NAME'),
+      password: ENV.fetch('SMTP_PASSWORD'),
+      authentication: :plain,
+      enable_starttls_auto: true
+    }
+    config.action_mailer.raise_delivery_errors = true
+  end
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

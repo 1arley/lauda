@@ -1,5 +1,6 @@
 class ExportJobsController < ApplicationController
   def index
+    skip_authorization
     @export_jobs = policy_scope(ExportJob).includes(:report, :user).order(created_at: :desc)
     @pagy, @export_jobs = pagy(@export_jobs, items: 20)
   end
@@ -9,8 +10,13 @@ class ExportJobsController < ApplicationController
     authorize @export_job
 
     if @export_job.completed?
-      # file_url é caminho relativo gerado pelo PdfExportJob (mesmo host).
-      redirect_to @export_job.file_url
+      path = @export_job.artifact_path
+      if path && File.file?(path)
+        return send_file(path, filename: File.basename(path), type: 'application/pdf',
+                               disposition: 'attachment')
+      end
+
+      head :not_found
     else
       redirect_to export_jobs_path, notice: 'Exportação ainda em processamento.'
     end

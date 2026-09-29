@@ -1,6 +1,6 @@
 class InstrumentApplicationsController < ApplicationController
   before_action :set_assessment
-  before_action :set_instrument_application, only: %i[show edit_answers update_answers score results destroy]
+  before_action :set_instrument_application, only: %i[show edit_answers update_answers score compute results destroy]
 
   def new
     @instrument_application = @assessment.instrument_applications.build
@@ -28,15 +28,8 @@ class InstrumentApplicationsController < ApplicationController
 
   def update_answers
     authorize @instrument_application
+    @instrument_application.update_answers!(params[:answer_sets] || {})
 
-    params[:answer_sets]&.each_value do |attrs|
-      answer_set = @instrument_application.answer_sets.find_or_initialize_by(subtest_name: attrs[:subtest_name])
-      answer_set.answers = attrs[:answers]
-      answer_set.position = attrs[:position]
-      answer_set.save!
-    end
-
-    @instrument_application.update(status: :answered, applied_at: Time.current)
     redirect_to score_assessment_instrument_application_path(@assessment, @instrument_application),
                 notice: 'Respostas salvas.'
   end
@@ -48,9 +41,7 @@ class InstrumentApplicationsController < ApplicationController
 
   def compute
     authorize @instrument_application
-
-    normative_table = NormativeTable.find(params.expect(:normative_table_id))
-    @instrument_application.compute!(normative_table_id: normative_table.id)
+    @instrument_application.compute!(normative_table_id: params.expect(:normative_table_id))
 
     redirect_to results_assessment_instrument_application_path(@assessment, @instrument_application),
                 notice: 'Cálculo realizado.'

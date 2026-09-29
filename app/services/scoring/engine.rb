@@ -1,23 +1,21 @@
 module Scoring
   class Engine
-    def initialize(instrument_application)
+    def initialize(instrument_application, normative_table)
       @instrument_application = instrument_application
       @instrument = instrument_application.instrument_version.instrument
-      @instrument_version = instrument_application.instrument_version
+      @normative_table = normative_table
     end
 
-    def compute!(normative_table_id:)
-      normative_table = NormativeTable.find(normative_table_id)
-
+    def compute!
       ActiveRecord::Base.transaction do
         @instrument_application.score_results.destroy_all
 
         calculator = find_calculator
-        results = calculator.new(@instrument_application, normative_table).calculate
+        results = calculator.new(@instrument_application, @normative_table).calculate
 
         results.each_with_index do |result, index|
           @instrument_application.score_results.create!(
-            normative_table: normative_table,
+            normative_table: @normative_table,
             subtest_name: result[:subtest_name],
             position: index,
             raw_score: result[:raw_score],

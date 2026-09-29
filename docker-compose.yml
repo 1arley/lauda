@@ -2,39 +2,85 @@ services:
   db:
     image: postgres:16-alpine
     restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Defina POSTGRES_DB no .env}
+      POSTGRES_USER: ${POSTGRES_USER:?Defina POSTGRES_USER no .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env}
     volumes:
       - pgdata:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
+    image: ${IMAGE_NAME:-ghcr.io/1arley/lauda}:${IMAGE_TAG:-latest}
+    pull_policy: always
     restart: unless-stopped
-    ports:
-      - "3000:3000"
-    volumes:
-      - .:/rails
-      - bundle:/usr/local/bundle
     environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/laudos_saas_production
-      DB_HOST: db
       RAILS_ENV: production
-      SECRET_KEY_BASE: ${SECRET_KEY_BASE:-d8d189adbab97dd74e84c258aff0c335}
-      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY:-}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?Defina SECRET_KEY_BASE no .env}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      DB_HOST: db
+      LAUDOS_SAAS_DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      APP_HOST: ${APP_HOST:?Defina APP_HOST no .env}
+      APP_PROTOCOL: https
+      MAILER_SENDER: ${MAILER_SENDER:?Defina MAILER_SENDER no .env}
+      SMTP_ADDRESS: ${SMTP_ADDRESS:?Defina SMTP_ADDRESS no .env}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER_NAME: ${SMTP_USER_NAME:?Defina SMTP_USER_NAME no .env}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:?Defina SMTP_PASSWORD no .env}
+      SMTP_DOMAIN: ${SMTP_DOMAIN:?Defina SMTP_DOMAIN no .env}
+      STORAGE_SERVICE: local
+      SOLID_QUEUE_IN_PUMA: "true"
+      PORT: 80
+    expose:
+      - "80"
+    volumes:
+      - app_storage:/rails/storage
     depends_on:
       db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --header 'Host: $${APP_HOST}' http://localhost/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      APP_HOST: ${APP_HOST:?Defina APP_HOST no .env}
+      ACME_EMAIL: ${ACME_EMAIL:?Defina ACME_EMAIL no .env}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    command:
+      - /bin/sh
+      - -ec
+      - |
+        cat > /tmp/Caddyfile <<EOF
+        {
+          email $${ACME_EMAIL}
+        }
+        $${APP_HOST} {
+          reverse_proxy app:80
+        }
+        EOF
+        exec caddy run --config /tmp/Caddyfile --adapter caddyfile
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
         condition: service_healthy
 
 volumes:
   pgdata:
-  bundle:
+  app_storage:
+  caddy_data:
+  caddy_config:

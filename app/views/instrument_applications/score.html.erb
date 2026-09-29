@@ -23,7 +23,7 @@
           <% @instrument_application.answer_sets.ordered.each do |as| %>
             <tr class="border-b border-gray-100">
               <td class="py-2 text-gray-900"><%= as.subtest_name %></td>
-              <td class="py-2 text-right font-medium text-gray-900"><%= as.answers.values.sum %></td>
+              <td class="py-2 text-right font-medium text-gray-900"><%= as.raw_total %></td>
             </tr>
           <% end %>
         </tbody>

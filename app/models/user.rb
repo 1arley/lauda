@@ -6,6 +6,11 @@ class User < ApplicationRecord
          :confirmable, :trackable
 
   belongs_to :tenant, inverse_of: :users
+
+  # Dados da clínica no mesmo formulário de cadastro; o controller transforma
+  # tenant_name em Tenant#name e cria a clínica junto com o usuário.
+  attr_accessor :tenant_name, :subdomain
+
   has_many :owned_assessments, class_name: 'Assessment', foreign_key: :owner_id, dependent: :nullify, inverse_of: :owner
   has_many :applied_instruments, class_name: 'InstrumentApplication', foreign_key: :applied_by_id, dependent: :nullify,
                                  inverse_of: :applied_by

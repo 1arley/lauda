@@ -51,9 +51,10 @@ module Pdf
         ['Profissional:', @assessment.owner.name]
       ].compact
 
-      pdf.table(info, column_widths: [120, 380]) do
-        style(:all, borders: [], padding: 3)
-        column(0).font_style = :bold
+      label_width = (pdf.bounds.width * 0.28).round
+      widths = [label_width, pdf.bounds.width - label_width]
+      pdf.table(info, column_widths: widths, cell_style: { borders: [], padding: 3 }) do |table|
+        table.column(0).each { |cell| cell.font_style = :bold }
       end
 
       pdf.move_down 15
@@ -95,9 +96,12 @@ module Pdf
           ].compact
         end
 
-        pdf.table(data, column_widths: [150, 60, 80, 70, 140]) do
-          row(0).font_style = :bold
-          row(0).background_color = 'EEEEEE'
+        total = pdf.bounds.width
+        widths = [0.30, 0.12, 0.16, 0.14].map { |ratio| (total * ratio).round }
+        widths << (total - widths.sum)
+        pdf.table(data, column_widths: widths) do |table|
+          table.row(0).font_style = :bold
+          table.row(0).background_color = 'EEEEEE'
         end
 
         pdf.move_down 10

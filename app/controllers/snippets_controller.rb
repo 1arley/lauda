@@ -2,6 +2,7 @@ class SnippetsController < ApplicationController
   before_action :set_snippet, only: %i[edit update destroy]
 
   def index
+    skip_authorization
     @snippets = policy_scope(Snippet).active_snippets.order(:title)
     @snippets = @snippets.by_category(params[:category]) if params[:category].present?
   end

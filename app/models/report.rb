@@ -11,7 +11,16 @@ class Report < ApplicationRecord
 
   after_initialize { self.sections ||= [] }
 
-  acts_as_tenant :tenant, through: :assessment
+  # reports não tem tenant_id: o tenant vem da avaliação. O escopo padrão
+  # replica o que o acts_as_tenant faria via `through`, para que uma consulta
+  # direta ao model não atravesse clínicas.
+  default_scope lambda {
+    if ActsAsTenant.current_tenant
+      joins(:assessment).where(assessment: { tenant_id: ActsAsTenant.current_tenant.id })
+    else
+      all
+    end
+  }
 
   def tenant
     assessment&.tenant

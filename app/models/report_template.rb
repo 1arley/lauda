@@ -11,6 +11,8 @@ class ReportTemplate < ApplicationRecord
 
   acts_as_tenant(:tenant)
 
+  scope :active_templates, -> { kept.where(active: true) }
+
   def self.default_for(tenant)
     where(tenant: tenant, default: true).first
   end

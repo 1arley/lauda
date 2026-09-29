@@ -1,8 +1,7 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: {
     sessions: 'users/sessions',
-    registrations: 'users/registrations',
-    passwords: 'users/passwords'
+    registrations: 'users/registrations'
   }
 
   root 'dashboard#index'
@@ -37,12 +36,6 @@ Rails.application.routes.draw do
   resources :snippets, only: %i[index new create edit update destroy]
 
   resources :export_jobs, only: %i[index show]
-
-  namespace :admin do
-    resources :users, only: %i[index new create edit update]
-    resources :instruments, only: %i[index new create edit update]
-    resource :tenant, only: %i[show edit update]
-  end
 
   get 'up' => 'rails/health#show', as: :rails_health_check
 end

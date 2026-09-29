@@ -2,6 +2,7 @@ class ReportTemplatesController < ApplicationController
   before_action :set_report_template, only: %i[show edit update destroy]
 
   def index
+    skip_authorization
     @report_templates = policy_scope(ReportTemplate).active_templates.order(:name)
   end
 

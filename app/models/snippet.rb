@@ -7,4 +7,5 @@ class Snippet < ApplicationRecord
   acts_as_tenant(:tenant)
 
   scope :by_category, ->(category) { where(category: category) if category.present? }
+  scope :active_snippets, -> { where(active: true) }
 end

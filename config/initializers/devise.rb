@@ -6,7 +6,7 @@ Devise.setup do |config|
   # Sem secret_key hardcoded: Devise usa Rails.application.secret_key_base por padrão
   # (devise/rails.rb), que vem de credentials/SECRET_KEY_BASE.
 
-  config.mailer_sender = 'noreply@laudos-saas.com'
+  config.mailer_sender = ENV.fetch('MAILER_SENDER', 'noreply@lauda.app')
 
   require 'devise/orm/active_record'
 
@@ -16,8 +16,6 @@ Devise.setup do |config|
 
   config.stretches = 12
   # pepper faz parte do hash de senha: trocar invalida todas as senhas existentes.
-  config.pepper = '295dc254fd7cea16edfbee30de1961600ea28d57c0a87d2b6099c798653584de6bfeb0a3af13c8ca7170baeec6deb71442fe03f6ebfcf383b8ee721e6a87e69f' # rubocop:disable Layout/LineLength
-
   config.reconfirmable = true
   config.confirm_within = 2.days
 

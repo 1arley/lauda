@@ -16,7 +16,7 @@ module Auditable
       tenant_id: Current.tenant_id,
       user_id: Current.user_id,
       action: action,
-      changes: saved_changes.except('updated_at', 'created_at'),
+      changeset: saved_changes.except('updated_at', 'created_at'),
       metadata: { ip_address: Current.ip_address }
     )
   rescue StandardError => e

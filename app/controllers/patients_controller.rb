@@ -2,6 +2,7 @@ class PatientsController < ApplicationController
   before_action :set_patient, only: %i[show edit update destroy]
 
   def index
+    skip_authorization
     @q = policy_scope(Patient).ransack(params[:q])
     @pagy, @patients = pagy(@q.result(distinct: true).order(:name), items: 20)
   end

@@ -3,7 +3,7 @@ module Scoring
     class GenericCalculator < BaseCalculator
       def calculate
         answer_sets.map do |answer_set|
-          raw = answer_set.answers.values.sum.to_f
+          raw = answer_set.raw_total.to_f
           score = lookup_score(raw)
 
           {

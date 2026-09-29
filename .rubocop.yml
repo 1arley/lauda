@@ -8,6 +8,8 @@ AllCops:
   SuggestExtensions: false
   Exclude:
     - "db/schema.rb"
+    - "db/queue_schema.rb"
+    - "db/cable_schema.rb"
     - "db/migrate/**/*"
     - "bin/**/*"
     - "vendor/**/*"
@@ -50,10 +52,12 @@ Rails/I18nLocaleTexts:
 Naming/PredicateMethod:
   Enabled: false
 
+# Configuração declarativa: o bloco é longo por natureza, não por complexidade.
 Metrics/BlockLength:
   Exclude:
-    - "spec/**/*"
+    - "config/environments/*.rb"
     - "config/routes.rb"
+    - "spec/**/*"
     - "db/seeds.rb"
 
 Rails/LexicallyScopedActionFilter:
@@ -61,3 +65,9 @@ Rails/LexicallyScopedActionFilter:
 
 RSpec/MultipleMemoizedHelpers:
   Max: 10
+
+# Com :aggregate_failures todas as asserções são avaliadas e as falhas aparecem
+# juntas, então um exemplo pode verificar várias facetas do mesmo comportamento.
+RSpec/MultipleExpectations:
+  AllowedPatterns:
+    - aggregate_failures

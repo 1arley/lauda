@@ -9,6 +9,7 @@ class Tenant < ApplicationRecord
 
   validates :name, presence: true
   validates :subdomain, presence: true, uniqueness: true
+  validates :subdomain, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/ }
 
   def admin_for(user)
     user.saas_admin? || user.tenant_admin?

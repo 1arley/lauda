@@ -15,16 +15,17 @@
     </p>
 
     <div class="space-y-4">
-      <% subtests = @instrument_application.instrument_version.scoring_config["subtests"] || ["Subteste 1", "Subteste 2", "Subteste 3"] %>
+      <% subtests = @instrument_application.instrument_version.scoring_config["subtests"] %>
+      <% answer_form = Struct.new(:subtest_name, :answers, :position) %>
       <% subtests.each_with_index do |subtest, index| %>
         <% existing = @instrument_application.answer_sets.find_by(subtest_name: subtest) %>
         <div class="flex items-center gap-4">
           <label class="w-48 text-sm font-medium text-gray-700 shrink-0"><%= subtest %></label>
-          <%= f.fields_for "answer_sets[#{index}]", OpenStruct.new(subtest_name: subtest, answers: existing&.answers || {}, position: index) do |af| %>
+          <%= f.fields_for "answer_sets[#{index}]", answer_form.new(subtest, existing&.answers || {}, index) do |af| %>
             <%= af.hidden_field :subtest_name %>
             <%= af.hidden_field :position %>
             <div class="flex gap-2 flex-1">
-              <% item_count = @instrument_application.instrument_version.scoring_config["items_per_subtest"] || 5 %>
+              <% item_count = @instrument_application.instrument_version.scoring_config["items_per_subtest"] %>
               <% item_count.times do |i| %>
                 <%= af.number_field "answers[#{i}]", value: existing&.answers&.dig(i.to_s), min: 0, max: 99, class: "w-16 rounded-lg border border-gray-300 px-2 py-2 text-sm text-center shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500", data: { action: "input->score-calculator#calculate" } %>
               <% end %>

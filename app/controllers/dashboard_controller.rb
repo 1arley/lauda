@@ -1,6 +1,4 @@
 class DashboardController < ApplicationController
-  before_action :authenticate_user!
-
   def index
     skip_authorization
     @recent_patients = policy_scope(Patient).order(updated_at: :desc).limit(5)

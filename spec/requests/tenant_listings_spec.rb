@@ -51,11 +51,20 @@ RSpec.describe 'Tenant listings', type: :request do
     end
   end
 
-  it 'requires authentication for every listing' do
+  it 'redirects to sign in on every listing' do
     sign_out user
 
     [patients_path, snippets_path, report_templates_path].each do |path|
       get path
+      expect(response).to redirect_to(new_user_session_path)
+    end
+  end
+
+  it 'answers unauthorized to unauthenticated JSON requests' do
+    sign_out user
+
+    [patients_path, snippets_path, report_templates_path].each do |path|
+      get path, as: :json
       expect(response).to have_http_status(:unauthorized)
     end
   end

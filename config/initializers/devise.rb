@@ -26,7 +26,11 @@ Devise.setup do |config|
 
   config.reset_password_within = 6.hours
 
-  config.navigational_formats = []
+  # Sem :html aqui o Devise responde 401 com "You need to sign in..." em vez de
+  # redirecionar, e o fluxo de login pelo navegador (ex.: / -> /users/sign_in)
+  # nunca acontece. Mantem */* fora de proposito: o devise-jwt cuida das chamadas
+  # de API, que devem continuar devolvendo 401 em JSON.
+  config.navigational_formats = [:html]
 
   config.sign_out_via = :delete
 

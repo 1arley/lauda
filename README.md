@@ -6,13 +6,16 @@ Aplicação multi-tenant para gestão de avaliações, pacientes e emissão de l
 
 O workflow em `.github/workflows/publish-image.yml` publica `ghcr.io/1arley/lauda:latest` a cada push na branch principal e imagens versionadas para tags `v*`. Depois da primeira publicação, deixe o pacote do GHCR público para a VPS baixar sem login.
 
-Na VPS, instale Docker Engine e o plugin Compose, aponte o DNS de `APP_HOST` para o servidor e libere as portas 80 e 443. Copie apenas `docker-compose.yml` e um `.env` preenchido e rode:
+O TLS fica com o Traefik da máquina, que já atende os outros sites e emite certificado Let's Encrypt para a rede externa `web`. Por isso o Compose não publica 80/443 nem traz um proxy próprio: ele entra na rede `web` e o Traefik roteia `APP_HOST` para o container. Em uma máquina sem Traefik, acrescente um proxy que aponte para a porta 80 do serviço `app`.
+
+Na VPS, instale Docker Engine e o plugin Compose, crie a rede externa e aponte o DNS de `APP_HOST` para o servidor. Copie apenas `docker-compose.yml` e um `.env` preenchido para o diretório do projeto e rode:
 
 ```bash
+docker network create web
 docker compose up -d
 ```
 
-O Compose sempre baixa a imagem mais recente, sobe PostgreSQL e Caddy, emite TLS automaticamente, persiste banco e arquivos em volumes e prepara/migra o banco antes de iniciar Rails. Não exponha a porta 5432 na internet.
+O Compose sempre baixa a imagem mais recente, sobe o PostgreSQL, persiste banco e arquivos em volumes, prepara/migra o banco antes de iniciar o Rails e expõe o app apenas dentro da rede `web`. Não exponha a porta 5432 na internet.
 
 Gere os segredos antes de preencher o `.env`:
 
@@ -21,7 +24,7 @@ openssl rand -hex 64 # SECRET_KEY_BASE
 openssl rand -hex 24 # POSTGRES_PASSWORD
 ```
 
-Configure também o domínio, um remetente e as credenciais SMTP. SMTP é necessário para confirmar cadastros e recuperar senhas. O primeiro usuário cria a clínica e vira seu administrador; não há conta demo nem senha compartilhada. Confirmação de e-mail fica ativa.
+Configure também o domínio, um remetente e as credenciais SMTP. SMTP é necessário para confirmar cadastros e recuperar senhas; com Resend, `SMTP_ADDRESS` é `smtp.resend.com`, `SMTP_USER_NAME` é `resend` e `SMTP_PASSWORD` é a API key, e o remetente precisa pertencer a um domínio verificado no Resend. O primeiro usuário cria a clínica e vira seu administrador; não há conta demo nem senha compartilhada. Confirmação de e-mail fica ativa.
 
 Os PDFs usam Solid Queue persistido no PostgreSQL e rodam no mesmo container Rails. Volumes Docker preservam os dados durante atualizações; mantenha backups externos do PostgreSQL e de `app_storage`.
 

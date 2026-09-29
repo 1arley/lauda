@@ -1,3 +1,11 @@
+# Producao do Lauda. Imagem publicada por .github/workflows/publish-image.yml
+# a cada push na branch principal; este arquivo e copiado para /srv/lauda/ na
+# VPS, que e onde os containers rodam (nao ha build na VPS).
+# TLS fica com o Traefik da maquina, que ja emite certificado via Let's Encrypt
+# para a rede `web`; por isso nao ha servico de proxy reverso aqui e as portas
+# 80/443 nao sao publicadas.
+name: lauda
+
 services:
   db:
     image: postgres:16-alpine
@@ -48,39 +56,23 @@ services:
       timeout: 5s
       retries: 5
       start_period: 60s
+    networks:
+      - web
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: "web"
+      traefik.http.routers.lauda.entrypoints: "websecure"
+      traefik.http.routers.lauda.rule: "Host(`${APP_HOST:?Defina APP_HOST no .env}`)"
+      traefik.http.routers.lauda.service: "lauda"
+      traefik.http.routers.lauda.tls: "true"
+      traefik.http.routers.lauda.tls.certresolver: "letsencrypt"
+      traefik.http.services.lauda.loadbalancer.server.port: "80"
+      com.centurylinklabs.watchtower.enable: "true"
 
-  caddy:
-    image: caddy:2-alpine
-    restart: unless-stopped
-    environment:
-      APP_HOST: ${APP_HOST:?Defina APP_HOST no .env}
-      ACME_EMAIL: ${ACME_EMAIL:?Defina ACME_EMAIL no .env}
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    command:
-      - /bin/sh
-      - -ec
-      - |
-        cat > /tmp/Caddyfile <<EOF
-        {
-          email $${ACME_EMAIL}
-        }
-        $${APP_HOST} {
-          reverse_proxy app:80
-        }
-        EOF
-        exec caddy run --config /tmp/Caddyfile --adapter caddyfile
-    volumes:
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      app:
-        condition: service_healthy
+networks:
+  web:
+    external: true
 
 volumes:
   pgdata:
   app_storage:
-  caddy_data:
-  caddy_config:

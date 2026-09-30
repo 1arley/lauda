@@ -9,7 +9,7 @@
   <%= form_with(model: @report_template, class: "space-y-6") do |f| %>
     <% if @report_template.errors.any? %>
       <div class="rounded-lg bg-red-50 p-4 border border-red-200">
-        <h3 class="text-sm font-medium text-red-800"><%= @report_template.errors.count %> erro(s)</h3>
+        <h3 class="text-sm font-medium text-red-800">Revise os campos abaixo:</h3>
         <ul class="mt-2 list-disc list-inside text-sm text-red-700">
           <% @report_template.errors.full_messages.each do |msg| %>
             <li><%= msg %></li>
@@ -27,6 +27,20 @@
         <%= f.label :description, "Descrição", class: "block text-sm font-medium text-gray-700 mb-1" %>
         <%= f.text_area :description, rows: 2, class: "block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" %>
       </div>
+      <fieldset class="border-t border-gray-200 pt-4">
+        <legend class="text-sm font-medium text-gray-700">Seções *</legend>
+        <p class="mt-1 text-sm text-gray-500">Adicione pelo menos uma seção e informe seu título.</p>
+        <% sections = @report_template.sections.presence || [{}] %>
+        <% sections.each_with_index do |section, index| %>
+          <div class="mt-3">
+            <%= label_tag "report_template_sections_#{index}_title", "Título da seção", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= text_field_tag 'report_template[sections][][title]', section['title'], id: "report_template_sections_#{index}_title", class: "block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" %>
+            <%= label_tag "report_template_sections_#{index}_content", "Conteúdo inicial", class: "block text-sm font-medium text-gray-700 mt-3 mb-1" %>
+            <%= text_area_tag 'report_template[sections][][content]', section['content'], id: "report_template_sections_#{index}_content", rows: 4, class: "block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" %>
+            <%= hidden_field_tag 'report_template[sections][][section_type]', section['section_type'].presence || 'text' %>
+          </div>
+        <% end %>
+      </fieldset>
       <div class="flex items-center gap-2">
         <%= f.check_box :default, class: "rounded border-gray-300 text-blue-600 focus:ring-blue-500" %>
         <%= f.label :default, "Template padrão", class: "text-sm text-gray-700" %>

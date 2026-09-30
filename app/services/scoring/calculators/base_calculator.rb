@@ -16,6 +16,7 @@ module Scoring
       private
 
       def lookup_score(raw_score, age: nil, education_level: nil)
+        age ||= instrument_application.assessment&.patient&.age
         result = normative_table.lookup(
           raw_score: raw_score,
           age: age,

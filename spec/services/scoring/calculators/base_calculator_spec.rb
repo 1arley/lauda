@@ -61,7 +61,15 @@ RSpec.describe Scoring::Calculators::BaseCalculator do
         expect(scorer.send(:lookup_score, 9, age: 14)[:scaled_score]).to eq(12)
       end
 
-      it 'ignores the age filter when no age is given' do
+      it 'returns an unnormed result when the table requires age and no age is given' do
+        expect(scorer.send(:lookup_score, 9)).to include(scaled_score: nil, classification: 'Não normatizado')
+      end
+
+      it 'uses the patient age from the associated assessment' do
+        patient = create(:patient, birth_date: 9.years.ago.to_date)
+        assessment = create(:assessment, patient: patient)
+        app.update!(assessment: assessment)
+
         expect(scorer.send(:lookup_score, 9)[:scaled_score]).to eq(7)
       end
     end

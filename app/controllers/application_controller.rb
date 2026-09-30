@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+  rescue_from ActionController::ParameterMissing, with: :parameter_missing
 
   private
 
@@ -32,6 +33,11 @@ class ApplicationController < ActionController::Base
 
   def record_not_found
     flash[:alert] = 'Registro não encontrado.'
+    redirect_back_or_to(root_path)
+  end
+
+  def parameter_missing
+    flash[:alert] = 'Requisição inválida: dados ausentes. Envie o formulário novamente.'
     redirect_back_or_to(root_path)
   end
 end

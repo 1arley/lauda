@@ -42,6 +42,32 @@ pt-BR:
           other: "%{count} erros impediram que %{resource} fosse salvo:"
   activerecord:
     attributes:
+      assessment:
+        patient: "Paciente"
+        title: "Título"
+        context: "Contexto"
+        conducted_at: "Data da avaliação"
+      report:
+        report_template: "Template"
+        sections: "Seções"
+      report_template:
+        name: "Nome"
+        description: "Descrição"
+        sections: "Seções"
+      snippet:
+        title: "Título"
+        content: "Conteúdo"
+        category: "Categoria"
+      patient:
+        name: "Nome"
+        birth_date: "Data de nascimento"
+        gender: "Gênero"
+        cpf: "CPF"
+        email: "E-mail"
+        phone: "Telefone"
+        notes: "Observações"
+      instrument_application:
+        instrument_version: "Instrumento"
       user:
         email: "E-mail"
         password: "Senha"
@@ -52,3 +78,12 @@ pt-BR:
         confirmation: "não corresponde"
         invalid: "não é válido"
         too_short: "é muito curta (mínimo de %{count} caracteres)"
+      models:
+        assessment:
+          attributes:
+            patient:
+              required: "deve ser selecionado"
+        report:
+          attributes:
+            report_template:
+              required: "deve ser selecionado"

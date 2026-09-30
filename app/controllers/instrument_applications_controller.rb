@@ -17,6 +17,7 @@ class InstrumentApplicationsController < ApplicationController
       redirect_to edit_answers_assessment_instrument_application_path(@assessment, @instrument_application),
                   notice: 'Instrumento adicionado.'
     else
+      @available_versions = InstrumentVersion.active_versions.includes(:instrument)
       render :new, status: :unprocessable_content
     end
   end
@@ -46,8 +47,9 @@ class InstrumentApplicationsController < ApplicationController
     redirect_to results_assessment_instrument_application_path(@assessment, @instrument_application),
                 notice: 'Cálculo realizado.'
   rescue StandardError => e
+    Rails.logger.error("Falha ao calcular instrumento: #{e.class}: #{e.message}")
     redirect_to score_assessment_instrument_application_path(@assessment, @instrument_application),
-                alert: "Erro no cálculo: #{e.message}"
+                alert: 'Não foi possível calcular com a norma selecionada. Verifique a norma e tente novamente.'
   end
 
   def results

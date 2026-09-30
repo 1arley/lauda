@@ -1,5 +1,5 @@
 class ReportTemplatesController < ApplicationController
-  before_action :set_report_template, only: %i[show edit update destroy]
+  before_action :set_report_template, only: %i[edit update destroy]
 
   def index
     skip_authorization
@@ -20,7 +20,7 @@ class ReportTemplatesController < ApplicationController
     authorize @report_template
 
     if @report_template.save
-      redirect_to @report_template, notice: 'Template criado.'
+      redirect_to report_templates_path, notice: 'Template criado.'
     else
       render :new, status: :unprocessable_content
     end
@@ -30,7 +30,7 @@ class ReportTemplatesController < ApplicationController
     authorize @report_template
 
     if @report_template.update(report_template_params)
-      redirect_to @report_template, notice: 'Template atualizado.'
+      redirect_to report_templates_path, notice: 'Template atualizado.'
     else
       render :edit, status: :unprocessable_content
     end
@@ -49,6 +49,6 @@ class ReportTemplatesController < ApplicationController
   end
 
   def report_template_params
-    params.expect(report_template: [:name, :description, :default, { sections: %i[title content section_type] }])
+    params.expect(report_template: [:name, :description, :default, { sections: [[:title, :content, :section_type]] }])
   end
 end

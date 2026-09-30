@@ -31,7 +31,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :report_templates
+  resources :report_templates, except: :show
 
   resources :snippets, only: %i[index new create edit update destroy]
 

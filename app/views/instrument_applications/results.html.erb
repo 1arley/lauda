@@ -4,7 +4,7 @@
   <% end %>
   <div class="mt-2 flex items-center justify-between">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900">Resultados</h1>
+      <h1 class="text-2xl font-bold text-gray-900">3 de 3 · Resultados</h1>
       <p class="mt-1 text-sm text-gray-500"><%= @instrument_application.instrument_version.display_name %></p>
     </div>
     <div class="flex gap-2">
@@ -16,6 +16,11 @@
 </div>
 
 <% if @score_results.any? %>
+  <% if @instrument_application.norm_changed? %>
+    <div class="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+      A tabela normativa foi alterada desde este cálculo. Recalcule os resultados para usar a versão vigente.
+    </div>
+  <% end %>
   <div class="bg-white shadow-sm rounded-lg border border-gray-200 mb-6">
     <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
       <h2 class="text-lg font-medium text-gray-900">Tabela de Escores</h2>

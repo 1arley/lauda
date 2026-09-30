@@ -3,14 +3,28 @@
     <%= link_to assessment_path(@assessment), class: "text-sm text-gray-500 hover:text-gray-700" do %>
       &larr; Voltar para Avaliação
     <% end %>
-    <h1 class="mt-2 text-2xl font-bold text-gray-900">Adicionar Instrumento</h1>
+    <h1 class="mt-2 text-2xl font-bold text-gray-900">Adicionar instrumento</h1>
   </div>
 
   <%= form_with(model: [@assessment, @instrument_application], url: assessment_instrument_applications_path(@assessment), class: "space-y-6") do |f| %>
+    <% if @instrument_application.errors.any? %>
+      <div class="rounded-lg bg-red-50 p-4 border border-red-200">
+        <h3 class="text-sm font-medium text-red-800">Revise os campos abaixo:</h3>
+        <ul class="mt-2 list-disc list-inside text-sm text-red-700">
+          <% @instrument_application.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
     <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-6">
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Instrumento e Versão *</label>
         <%= f.collection_select :instrument_version_id, @available_versions, :id, :display_name, { prompt: "Selecione um instrumento" }, class: "block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" %>
+        <% if @available_versions.empty? %>
+          <p class="mt-2 text-sm text-gray-500">Ainda não há versões ativas no catálogo. Peça à administração para cadastrar uma versão com sua norma autorizada.</p>
+        <% end %>
       </div>
     </div>
 

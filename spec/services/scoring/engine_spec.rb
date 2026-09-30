@@ -50,6 +50,19 @@ RSpec.describe Scoring::Engine do
       expect(app.score_results.pluck(:computed_at)).to all(be_present)
     end
 
+    it 'stores the fingerprint of the normative table used' do
+      engine.compute!
+
+      expect(app.score_results.pluck(:normative_fingerprint)).to all(eq(Norms::Fingerprint.call(normative_table.data)))
+    end
+
+    it 'marks results as outdated if the normative table content changes' do
+      engine.compute!
+      normative_table.update!(data: normative_table.data.merge('editorial_note' => 'correção'))
+
+      expect(app.reload.norm_changed?).to be(true)
+    end
+
     it 'replaces previously computed results instead of appending' do
       engine.compute!
       expect { engine.compute! }.not_to change(ScoreResult, :count)
@@ -102,6 +115,19 @@ RSpec.describe Scoring::Engine do
       it 'falls back to the generic calculator, one result per answer set' do
         engine.compute!
         expect(app.score_results.pluck(:subtest_name)).to contain_exactly('Semelhanças', 'Cubos')
+      end
+    end
+
+    context 'with SRS-2 ADULT, which has no dedicated calculator' do
+      let(:instrument) { create(:instrument, code: 'SRS-2-ADULT') }
+      let(:answer_sets_attributes) do
+        [{ subtest_name: 'Itens', position: 0, answers: (1..50).index_with(1) }]
+      end
+
+      it 'falls back to one generic result and omits the SRS-2 domain breakdown' do
+        engine.compute!
+
+        expect(app.score_results.pluck(:subtest_name)).to eq(['Itens'])
       end
     end
   end

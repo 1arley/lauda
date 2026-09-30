@@ -19,12 +19,14 @@ class ReportsController < ApplicationController
 
   def create
     @report = @assessment.reports.build(report_params)
+    @report.sections = @report.report_template.sections if @report.report_template && @report.sections.blank?
     @report.created_by = current_user
     authorize @report
 
     if @report.save
       redirect_to edit_assessment_report_path(@assessment, @report), notice: 'Laudo criado.'
     else
+      @templates = policy_scope(ReportTemplate).active_templates
       render :new, status: :unprocessable_content
     end
   end
@@ -35,6 +37,7 @@ class ReportsController < ApplicationController
     if @report.update(report_params)
       redirect_to edit_assessment_report_path(@assessment, @report), notice: 'Laudo salvo.'
     else
+      @snippets = policy_scope(Snippet).active_snippets
       render :edit, status: :unprocessable_content
     end
   end
@@ -69,6 +72,6 @@ class ReportsController < ApplicationController
   end
 
   def report_params
-    params.expect(report: [:report_template_id, { sections: %i[title content section_type] }])
+    params.expect(report: [:report_template_id, { sections: [[:title, :content, :section_type]] }])
   end
 end

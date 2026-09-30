@@ -1,5 +1,8 @@
 class AssessmentsController < ApplicationController
   before_action :set_assessment, only: %i[show edit update destroy finalize]
+  # @patients é exigido pelo formulário em qualquer render (new/edit e
+  # re-render de create/update com erro).
+  before_action :set_patients, only: %i[new create edit update]
 
   def index
     skip_authorization
@@ -11,14 +14,13 @@ class AssessmentsController < ApplicationController
 
   def show
     authorize @assessment
-    @instrument_applications = @assessment.instrument_applications.includes(:instrument_version, :score_results)
+    @instrument_applications = @assessment.instrument_applications.includes(:instrument_version, score_results: :normative_table)
     @reports = @assessment.reports.includes(:report_template)
   end
 
   def new
     @assessment = Assessment.new
     authorize @assessment
-    @patients = policy_scope(Patient).order(:name)
   end
 
   def edit
@@ -67,6 +69,10 @@ class AssessmentsController < ApplicationController
 
   def set_assessment
     @assessment = Assessment.find(params.expect(:id))
+  end
+
+  def set_patients
+    @patients = policy_scope(Patient).order(:name)
   end
 
   def assessment_params

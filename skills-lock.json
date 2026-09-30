@@ -7,6 +7,48 @@
       "skillPath": "skills/engineering/improve-codebase-architecture/SKILL.md",
       "computedHash": "2449db6ab1ded9581f69fcc56c1f64818112d05e271fd4c5da23c6523f9d3d9d"
     },
+    "rails-architecture": {
+      "source": "1arley/ruby-rails-skills",
+      "sourceType": "github",
+      "skillPath": "rails-architecture/SKILL.md",
+      "computedHash": "3d4897dab2b96d5757f9039d7422ee4d0bc1799abb2cb1f45c0b1308b20a2109"
+    },
+    "rails-expert": {
+      "source": "jeffallan/claude-skills",
+      "sourceType": "github",
+      "skillPath": "skills/rails-expert/SKILL.md",
+      "computedHash": "e67a8886ff2a11da8133188a0bc0b48b9df213c6fc4bac4cbdd1ddacabb628c1"
+    },
+    "rails-performance": {
+      "source": "1arley/ruby-rails-skills",
+      "sourceType": "github",
+      "skillPath": "rails-performance/SKILL.md",
+      "computedHash": "a98ff530d14dcf155bd715e1be4297e337613675699fc3dd60b0e4b74fabeac0"
+    },
+    "ruby-on-rails-best-practices": {
+      "source": "sergiodxa/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ruby-on-rails-best-practices/SKILL.md",
+      "computedHash": "74112454ed35af21a06e076fa9df7283dca2c116f62010618e56f49aa129c656"
+    },
+    "ruby-rails": {
+      "source": "mindrally/skills",
+      "sourceType": "github",
+      "skillPath": "ruby-rails/SKILL.md",
+      "computedHash": "3b9dc29b7abf6879c3e3ce6686fd98fb804f0aa83a7592c4765ba8c5b73307ee"
+    },
+    "ruby-style": {
+      "source": "1arley/ruby-rails-skills",
+      "sourceType": "github",
+      "skillPath": "ruby-style/SKILL.md",
+      "computedHash": "5b3ea717025a6174d679141316668c1024940b99d02b11f1ad84892877eacc11"
+    },
+    "ruby-testing": {
+      "source": "1arley/ruby-rails-skills",
+      "sourceType": "github",
+      "skillPath": "ruby-testing/SKILL.md",
+      "computedHash": "fb314e4807b6d2794a6c9d925f38552bb7d66d403369e2d1db4e45caa8f613c4"
+    },
     "security-audit": {
       "source": "cloudflare/security-audit-skill",
       "sourceType": "github",

@@ -16,6 +16,7 @@ module Scoring
         results.each_with_index do |result, index|
           @instrument_application.score_results.create!(
             normative_table: @normative_table,
+            normative_fingerprint: Norms::Fingerprint.call(@normative_table.data),
             subtest_name: result[:subtest_name],
             position: index,
             raw_score: result[:raw_score],

@@ -15,6 +15,10 @@ class InstrumentApplication < ApplicationRecord
     score_results.sum(:raw_score)
   end
 
+  def norm_changed?
+    score_results.includes(:normative_table).any?(&:norm_changed?)
+  end
+
   def update_answers!(attributes_by_index)
     self.class.transaction do
       attributes_by_index.each_value do |attributes|

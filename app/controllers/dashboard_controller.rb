@@ -9,5 +9,10 @@ class DashboardController < ApplicationController
       active_assessments: policy_scope(Assessment).active_assessments.count,
       pending_reports: policy_scope(Report).where(status: %i[draft in_review]).count
     }
+    @show_onboarding = @stats.values.all?(&:zero?)
+    @stale_applications = policy_scope(InstrumentApplication)
+      .where(status: :scored)
+      .includes(:assessment, { score_results: :normative_table }, instrument_version: :instrument)
+      .select(&:norm_changed?)
   end
 end

@@ -3,6 +3,32 @@
   <p class="mt-1 text-sm text-gray-500">Visão geral da plataforma</p>
 </div>
 
+<% if @show_onboarding %>
+  <section class="mb-8 rounded-lg border border-blue-200 bg-blue-50 p-6" aria-labelledby="onboarding-title">
+    <h2 id="onboarding-title" class="text-lg font-semibold text-gray-900">Comece por aqui</h2>
+    <ol class="mt-4 space-y-3 text-sm text-gray-700">
+      <li><span class="font-semibold">1.</span> Cadastre o paciente da avaliação. <%= link_to "Cadastrar paciente", new_patient_path, class: "font-medium text-blue-700 hover:text-blue-900" %></li>
+      <li><span class="font-semibold">2.</span> Crie uma avaliação para esse paciente. <%= link_to "Nova avaliação", new_assessment_path, class: "font-medium text-blue-700 hover:text-blue-900" %></li>
+      <li><span class="font-semibold">3.</span> Dentro da avaliação, adicione um instrumento disponível no catálogo e siga as etapas para lançar respostas e calcular os escores. <%= link_to "Ver avaliações", assessments_path, class: "font-medium text-blue-700 hover:text-blue-900" %></li>
+    </ol>
+  </section>
+<% end %>
+
+<% if @stale_applications.any? %>
+  <section class="mb-8 rounded-lg border border-amber-200 bg-amber-50 p-6" aria-labelledby="stale-norms-title">
+    <h2 id="stale-norms-title" class="text-lg font-semibold text-amber-900">Resultados que precisam ser recalculados</h2>
+    <p class="mt-1 text-sm text-amber-800">A tabela normativa mudou depois do cálculo destes instrumentos.</p>
+    <ul class="mt-4 divide-y divide-amber-200">
+      <% @stale_applications.each do |application| %>
+        <li class="flex items-center justify-between gap-4 py-3">
+          <span class="text-sm text-amber-900"><%= application.instrument_version.display_name %> · <%= application.assessment.title %></span>
+          <%= link_to "Recalcular", score_assessment_instrument_application_path(application.assessment, application), class: "shrink-0 text-sm font-medium text-amber-900 underline hover:text-amber-700" %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>
+
 <div class="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
   <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200 px-4 py-5 sm:p-6">
     <dt class="text-sm font-medium text-gray-500 truncate">Total de Pacientes</dt>

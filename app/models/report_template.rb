@@ -5,7 +5,7 @@ class ReportTemplate < ApplicationRecord
   has_many :reports, dependent: :destroy
 
   validates :name, presence: true
-  validates :sections, presence: true
+  validate :has_at_least_one_section_with_title
 
   after_initialize { self.sections ||= [] }
 
@@ -15,5 +15,13 @@ class ReportTemplate < ApplicationRecord
 
   def self.default_for(tenant)
     where(tenant: tenant, default: true).first
+  end
+
+  private
+
+  def has_at_least_one_section_with_title
+    return if sections.is_a?(Array) && sections.any? { |section| section.is_a?(Hash) && section['title'].present? }
+
+    errors.add(:base, 'Adicione pelo menos uma seção com título ao template.')
   end
 end

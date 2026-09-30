@@ -13,6 +13,17 @@
   </div>
 
   <%= form_with(model: [@assessment, @report], data: { controller: "report-editor", "report-editor-patient-name-value": @assessment.patient.name, "report-editor-patient-age-value": @assessment.patient.age&.to_s, "report-editor-patient-birth-date-value": @assessment.patient.birth_date&.strftime("%d/%m/%Y"), "report-editor-title-value": @assessment.title }) do |f| %>
+    <% if @report.errors.any? %>
+      <div class="mb-6 rounded-lg bg-red-50 p-4 border border-red-200">
+        <h3 class="text-sm font-medium text-red-800">Revise os campos abaixo:</h3>
+        <ul class="mt-2 list-disc list-inside text-sm text-red-700">
+          <% @report.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2 space-y-6">
         <% @report.sections.each_with_index do |section, index| %>
@@ -21,9 +32,9 @@
               <h3 class="text-sm font-semibold text-gray-900"><%= section["title"] %></h3>
             </div>
             <div class="p-4">
-              <%= f.hidden_field "sections[#{index}][title]", value: section["title"] %>
-              <%= f.hidden_field "sections[#{index}][section_type]", value: section["section_type"] %>
-              <%= f.text_area "sections[#{index}][content]", value: section["content"], rows: 8,
+              <%= hidden_field_tag "report[sections][][title]", section["title"] %>
+              <%= hidden_field_tag "report[sections][][section_type]", section["section_type"] %>
+              <%= text_area_tag "report[sections][][content]", section["content"], rows: 8,
                 data: { "report-editor-target": "content", "action": "input->report-editor#updatePreview" },
                 class: "block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 font-mono" %>
             </div>

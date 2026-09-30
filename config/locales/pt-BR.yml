@@ -77,6 +77,7 @@ pt-BR:
         blank: "não pode ficar em branco"
         confirmation: "não corresponde"
         invalid: "não é válido"
+        record_invalid: "Falha na validação: %{errors}"
         too_short: "é muito curta (mínimo de %{count} caracteres)"
       models:
         assessment:

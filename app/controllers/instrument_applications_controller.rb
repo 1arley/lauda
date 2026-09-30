@@ -33,6 +33,12 @@ class InstrumentApplicationsController < ApplicationController
 
     redirect_to score_assessment_instrument_application_path(@assessment, @instrument_application),
                 notice: 'Respostas salvas.'
+  rescue ActiveRecord::RecordInvalid
+    if @instrument_application.errors.empty?
+      @instrument_application.errors.add(:base, 'Não foi possível salvar as respostas. Confira os valores e tente novamente.')
+    end
+
+    render :edit_answers, status: :unprocessable_content
   end
 
   def score

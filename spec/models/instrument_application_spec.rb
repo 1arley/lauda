@@ -2,7 +2,12 @@ require 'rails_helper'
 
 RSpec.describe InstrumentApplication do
   describe '#update_answers!' do
-    let(:app) { create(:instrument_application) }
+    let(:app) do
+      version = create(:instrument_version, scoring_config: {
+        'subtests' => %w[Semelhanças Cubos], 'items_per_subtest' => 2
+      })
+      create(:instrument_application, instrument_version: version)
+    end
     let(:answers) do
       {
         '0' => { subtest_name: 'Semelhanças', position: 0, answers: { '1' => 3 } },
@@ -36,6 +41,15 @@ RSpec.describe InstrumentApplication do
       answers['1'][:answers] = {}
 
       expect { app.update_answers!(answers) }.to raise_error(ActiveRecord::RecordInvalid)
+      expect(app.reload).to have_attributes(status: 'pending')
+      expect(app.answer_sets).to be_empty
+    end
+
+    it 'rejects blank or missing scores for any subtest' do
+      answers['0'][:answers] = { '1' => 3 }
+      answers['1'][:answers] = { '1' => '' }
+
+      expect { app.update_answers!(answers) }.to raise_error(ActiveRecord::RecordInvalid, /escore para cada subteste/)
       expect(app.reload).to have_attributes(status: 'pending')
       expect(app.answer_sets).to be_empty
     end

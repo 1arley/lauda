@@ -9,6 +9,17 @@
 </div>
 
 <%= form_with url: update_answers_assessment_instrument_application_path(@assessment, @instrument_application), method: :patch, data: { controller: "score-calculator" }, class: "space-y-6" do |f| %>
+  <% if @instrument_application.errors.any? %>
+    <div class="rounded-lg bg-red-50 p-4 border border-red-200">
+      <h2 class="text-sm font-medium text-red-800">Revise as respostas:</h2>
+      <ul class="mt-2 list-disc list-inside text-sm text-red-700">
+        <% @instrument_application.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
   <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-6">
     <p class="text-sm text-gray-500 mb-4">
       Insira os escores brutos para cada subteste. O total será calculado automaticamente.

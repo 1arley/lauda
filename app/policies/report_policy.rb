@@ -2,8 +2,8 @@ class ReportPolicy < ApplicationPolicy
   def index? = true
   def show? = same_tenant?
   def create? = professional_or_above?
-  def update? = owner_or_admin?
-  def finalize? = owner_or_admin?
+  def update? = owner_or_admin? && !record.final?
+  def finalize? = owner_or_admin? && !record.final?
   def export_pdf? = same_tenant?
 
   class Scope < ApplicationPolicy::Scope

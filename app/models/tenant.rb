@@ -6,6 +6,7 @@ class Tenant < ApplicationRecord
   has_many :snippets, dependent: :destroy
   has_many :audit_logs, dependent: :destroy
   has_many :export_jobs, dependent: :destroy
+  has_many :invitations, dependent: :destroy
 
   validates :name, presence: true
   validates :subdomain, presence: true, uniqueness: true

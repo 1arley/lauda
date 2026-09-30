@@ -6,6 +6,10 @@ Rails.application.routes.draw do
 
   root 'dashboard#index'
 
+  get 'convites/aceitar' => 'invitations#accept', as: :accept_invitation
+  patch 'convites/aceitar' => 'invitations#accept_registration'
+  resources :invitations, only: %i[new create]
+
   resources :patients
 
   resources :assessments do

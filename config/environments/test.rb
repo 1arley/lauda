@@ -36,6 +36,11 @@ Rails.application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
 
+  # O Solid Queue roda em banco próprio (db/queue_migrate) e esse banco não
+  # existe em test, então `deliver_later`/`perform_later` caem no adapter
+  # :test, que enfileira em memória e deixa o spec afirmar sobre o job.
+  config.active_job.queue_adapter = :test
+
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: 'example.com' }
 

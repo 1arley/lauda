@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_30_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_30_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -125,6 +125,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_120000) do
     t.string "publisher"
     t.datetime "updated_at", null: false
     t.index ["code"], name: "index_instruments_on_code", unique: true
+  end
+
+  create_table "invitations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "accepted_at"
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.datetime "expires_at", null: false
+    t.uuid "invited_by_id"
+    t.integer "role", default: 2, null: false
+    t.uuid "tenant_id", null: false
+    t.string "token_digest", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invited_by_id"], name: "index_invitations_on_invited_by_id"
+    t.index ["tenant_id", "email"], name: "index_invitations_on_tenant_id_and_email"
+    t.index ["tenant_id"], name: "index_invitations_on_tenant_id"
+    t.index ["token_digest"], name: "index_invitations_on_token_digest", unique: true
   end
 
   create_table "normative_tables", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -273,6 +289,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_120000) do
   add_foreign_key "instrument_applications", "instrument_versions"
   add_foreign_key "instrument_applications", "users", column: "applied_by_id"
   add_foreign_key "instrument_versions", "instruments"
+  add_foreign_key "invitations", "tenants"
+  add_foreign_key "invitations", "users", column: "invited_by_id"
   add_foreign_key "normative_tables", "instrument_versions"
   add_foreign_key "patients", "tenants"
   add_foreign_key "report_templates", "tenants"

@@ -1,0 +1,7 @@
+<p>Olá!</p>
+<p>
+  A clínica <strong><%= @tenant_name %></strong> convidou você para usar o Lauda
+  como <strong><%= @invitation.role.humanize.downcase %></strong>.
+</p>
+<p><%= link_to "Aceitar convite e criar minha senha", @url %></p>
+<p>O convite expira em <%= @invitation.expires_at.strftime('%d/%m/%Y') %>.</p>

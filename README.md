@@ -26,6 +26,8 @@ openssl rand -hex 24 # POSTGRES_PASSWORD
 
 Configure também o domínio, um remetente e a credencial da Resend. O e-mail de confirmação de cadastro e o de recuperação de senha saem pela API HTTP da Resend (`RESEND_API_KEY` + `MAILER_SENDER`), não por SMTP: o egress das portas 25/465/587 está bloqueado no host da VPS, enquanto `api.resend.com:443` responde, e é assim que os demais apps da mesma VPS enviam. Crie a chave em resend.com/api-keys com acesso de envio; o remetente precisa pertencer a um domínio verificado no Resend. O primeiro usuário cria a clínica e vira seu administrador; não há conta demo nem senha compartilhada. Confirmação de e-mail fica ativa.
 
+Para trazer alguém para a mesma clínica, o administrador da clínica usa **Convidar** no menu lateral: a pessoa recebe um e-mail com um link de uso único e define a própria senha. Convite expira em 7 dias, guarda apenas o digest do token (o link cru só existe no e-mail) e não pode ser reusado. O papel vai no convite: `tenant_admin`, `professional` ou `reviewer` — `saas_admin` fica de fora, porque quem administra uma clínica não promove ninguém a administrador da plataforma.
+
 Os PDFs usam Solid Queue persistido no PostgreSQL e rodam no mesmo container Rails. Volumes Docker preservam os dados durante atualizações; mantenha backups externos do PostgreSQL e de `app_storage`.
 
 ## Desenvolvimento

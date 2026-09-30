@@ -1,0 +1,7 @@
+Olá!
+
+A clínica <%= @tenant_name %> convidou você para usar o Lauda como <%= @invitation.role.humanize.downcase %>.
+
+<%= @url %>
+
+O convite expira em <%= @invitation.expires_at.strftime('%d/%m/%Y') %>.

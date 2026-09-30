@@ -21,17 +21,22 @@ RSpec.describe 'Report template creation', type: :request do
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('Título da seção')
+    expect(response.body).to include('Adicionar seção')
 
     post report_templates_path, params: {
       report_template: {
         name: 'Laudo psicológico',
         description: 'Descrição preenchida',
-        sections: [{ title: 'Identificação', content: 'Dados do paciente', section_type: 'text' }]
+        sections: [
+          { title: 'Identificação', content: 'Dados do paciente', section_type: 'text' },
+          { title: 'Conclusão', content: '', section_type: 'text' }
+        ]
       }
     }
 
     expect(response).to redirect_to(report_templates_path)
     expect(ReportTemplate.last.sections.first['title']).to eq('Identificação')
+    expect(ReportTemplate.last.sections.second['title']).to eq('Conclusão')
 
     follow_redirect!
     expect(response).to have_http_status(:ok)

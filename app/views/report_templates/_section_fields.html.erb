@@ -1,0 +1,7 @@
+<div class="mt-3" data-report-template-section>
+  <%= label_tag "report_template_sections_#{index}_title", "Título da seção", class: "block text-sm font-medium text-gray-700 mb-1" %>
+  <%= text_field_tag 'report_template[sections][][title]', section['title'], id: "report_template_sections_#{index}_title", class: "block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" %>
+  <%= label_tag "report_template_sections_#{index}_content", "Conteúdo inicial", class: "block text-sm font-medium text-gray-700 mt-3 mb-1" %>
+  <%= text_area_tag 'report_template[sections][][content]', section['content'], id: "report_template_sections_#{index}_content", rows: 4, class: "block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" %>
+  <%= hidden_field_tag 'report_template[sections][][section_type]', section['section_type'].presence || 'text' %>
+</div>

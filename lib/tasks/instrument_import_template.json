@@ -1,0 +1,25 @@
+{
+  "_comment": "TEMPLATE do formato de instruments:import. NAO e norma real: os numeros abaixo sao um exemplo de estrutura e precisam ser trocados pelo material autorizado antes de rodar. 'source' e obrigatorio.",
+  "source": "MANUAL, edicao, pagina - preencher com o material real",
+  "code": "WISC-IV",
+  "name": "Escala de Inteligência de Wechsler para Crianças - 4a edicao",
+  "category": "cognitive",
+  "author": "Wechsler",
+  "publisher": "Pearson",
+  "version": "4",
+  "norm_name": "Norma brasileira",
+  "norm_year": 2016,
+  "age_range": "6:16",
+  "education_level": null,
+  "scoring_config": {
+    "subtests": ["Similaridades", "Vocabulario", "Compreensao Verbal", "Matrizes de Progressao", "Aritmetica"],
+    "items_per_subtest": 5
+  },
+  "normative_table": "Norma geral 6-16",
+  "normative_data": {
+    "scores": [
+      { "min": 0, "max": 0, "scaled": 1, "percentile": 1, "classification": "Muito baixo" },
+      { "min": 1, "max": 99, "scaled": 10, "percentile": 50, "classification": "Medio" }
+    ]
+  }
+}

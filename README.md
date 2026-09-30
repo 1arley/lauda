@@ -39,3 +39,15 @@ docker compose -f docker-compose.dev.yml up -d
 ## Instrumentos e normas
 
 Não são criadas tabelas normativas falsas nem contas/pacientes de demonstração. Normas devem ser importadas de material oficial autorizado. Até que isso seja feito, os escores e compostos WISC-IV ainda não estão completos para uso clínico.
+
+O catálogo é populado por `instruments:import`, que cria ou atualiza instrumento, versão e tabela normativa a partir de um JSON. O campo `source` (manual, edição e página) é obrigatório: norma sem procedência não entra, porque a plataforma promete guardar a versão da norma usada em cada cálculo. O formato está em `lib/tasks/instrument_import_template.json` e a importação é idempotente, então rodar de novo atualiza em vez de duplicar.
+
+```bash
+docker compose exec app bin/rails "instruments:import[/rails/caminho/instrumento.json]"
+```
+
+O arquivo precisa estar legível dentro do container; na VPS, copie para o diretório do projeto ou monte o volume. Confira o resultado com `conformidade:conferir`, que compara os escores calculados com um exemplo publicado do manual:
+
+```bash
+docker compose exec app bin/rails "conformidade:conferir[CODIGO,VERSAO,ARQUIVO_JSON]"
+```

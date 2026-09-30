@@ -11,8 +11,8 @@ class DashboardController < ApplicationController
     }
     @show_onboarding = @stats.values.all?(&:zero?)
     @stale_applications = policy_scope(InstrumentApplication)
-      .where(status: :scored)
-      .includes(:assessment, { score_results: :normative_table }, instrument_version: :instrument)
-      .select(&:norm_changed?)
+                          .where(status: :scored)
+                          .includes(:assessment, { score_results: :normative_table }, instrument_version: :instrument)
+                          .select(&:norm_changed?)
   end
 end

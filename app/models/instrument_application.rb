@@ -22,7 +22,7 @@ class InstrumentApplication < ApplicationRecord
   def update_answers!(attributes_by_index)
     unless answers_present?(attributes_by_index)
       errors.add(:base, 'Informe pelo menos um escore para cada subteste antes de continuar.')
-      raise ActiveRecord::RecordInvalid.new(self)
+      raise ActiveRecord::RecordInvalid, self
     end
 
     self.class.transaction do
@@ -46,18 +46,23 @@ class InstrumentApplication < ApplicationRecord
   def answers_present?(attributes_by_index)
     return false unless attributes_by_index.respond_to?(:values)
 
-    submitted = attributes_by_index.values.each_with_object({}) do |attributes, answers_by_subtest|
-      next unless attributes.respond_to?(:[])
-
-      subtest_name = attributes[:subtest_name] || attributes['subtest_name']
-      answers = attributes[:answers] || attributes['answers']
-      answers_by_subtest[subtest_name] = answers if subtest_name.present?
-    end
-
     expected_subtests = instrument_version.scoring_config['subtests']
     expected_subtests.present? && expected_subtests.all? do |subtest_name|
-      answers = submitted[subtest_name]
+      answers_present_for?(attributes_by_index, subtest_name)
+    end
+  end
+
+  def answers_present_for?(attributes_by_index, subtest_name)
+    attributes_by_index.values.any? do |attributes|
+      next false unless attributes.respond_to?(:[])
+      next false unless attribute_value(attributes, :subtest_name) == subtest_name
+
+      answers = attribute_value(attributes, :answers)
       answers.respond_to?(:values) && answers.values.any?(&:present?)
     end
+  end
+
+  def attribute_value(attributes, key)
+    attributes[key] || attributes[key.to_s]
   end
 end

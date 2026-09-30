@@ -49,6 +49,6 @@ class ReportTemplatesController < ApplicationController
   end
 
   def report_template_params
-    params.expect(report_template: [:name, :description, :default, { sections: [[:title, :content, :section_type]] }])
+    params.expect(report_template: [:name, :description, :default, { sections: [%i[title content section_type]] }])
   end
 end

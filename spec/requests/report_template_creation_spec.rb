@@ -5,7 +5,7 @@ RSpec.describe 'Report template creation', type: :request do
 
   before { sign_in user }
 
-  it 'shows which required information is missing when no section is submitted' do
+  it 'shows which required information is missing when no section is submitted', :aggregate_failures do
     post report_templates_path, params: {
       report_template: { name: 'Laudo psicológico', description: 'Descrição preenchida' }
     }
@@ -16,7 +16,7 @@ RSpec.describe 'Report template creation', type: :request do
     expect(response.body).to include('Descrição preenchida')
   end
 
-  it 'creates a template with a section entered in the form' do
+  it 'creates a template with a section entered in the form', :aggregate_failures do
     get new_report_template_path
 
     expect(response).to have_http_status(:ok)

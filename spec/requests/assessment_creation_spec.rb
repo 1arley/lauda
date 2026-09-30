@@ -5,7 +5,7 @@ RSpec.describe 'Assessment creation', type: :request do
 
   before { sign_in user }
 
-  it 'returns the form with a clear message when no patient is selected' do
+  it 'returns the form with a clear message when no patient is selected', :aggregate_failures do
     post assessments_path, params: { assessment: { patient_id: '', title: 'Avaliação inicial' } }
 
     expect(response).to have_http_status(:unprocessable_content)

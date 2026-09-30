@@ -69,5 +69,7 @@ RSpec/MultipleMemoizedHelpers:
 # Com :aggregate_failures todas as asserções são avaliadas e as falhas aparecem
 # juntas, então um exemplo pode verificar várias facetas do mesmo comportamento.
 RSpec/MultipleExpectations:
-  AllowedPatterns:
-    - aggregate_failures
+  Max: 1
+
+RSpec/ExampleLength:
+  Max: 20

@@ -8,7 +8,7 @@ RSpec.describe 'Report creation', type: :request do
 
   before { sign_in user }
 
-  it 'returns the report form with an explicit template error when none is selected' do
+  it 'returns the report form with an explicit template error when none is selected', :aggregate_failures do
     post assessment_reports_path(assessment), params: { report: { report_template_id: '' } }
 
     expect(response).to have_http_status(:unprocessable_content)
@@ -17,10 +17,10 @@ RSpec.describe 'Report creation', type: :request do
     expect(response.body).not_to include('erro(s)')
   end
 
-  it 'copies template sections into the report and saves edits from the report form' do
+  it 'copies template sections into the report and saves edits from the report form', :aggregate_failures do
     template = ReportTemplate.create!(tenant: user.tenant, name: 'Template', sections: [
-      { 'title' => 'Resumo', 'content' => 'Texto inicial', 'section_type' => 'text' }
-    ])
+                                        { 'title' => 'Resumo', 'content' => 'Texto inicial', 'section_type' => 'text' }
+                                      ])
 
     post assessment_reports_path(assessment), params: { report: { report_template_id: template.id } }
 

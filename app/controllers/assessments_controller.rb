@@ -14,7 +14,8 @@ class AssessmentsController < ApplicationController
 
   def show
     authorize @assessment
-    @instrument_applications = @assessment.instrument_applications.includes(:instrument_version, score_results: :normative_table)
+    @instrument_applications = @assessment.instrument_applications.includes(:instrument_version,
+                                                                            score_results: :normative_table)
     @reports = @assessment.reports.includes(:report_template)
   end
 

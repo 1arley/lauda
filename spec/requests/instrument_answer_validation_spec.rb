@@ -8,8 +8,8 @@ RSpec.describe 'Instrument answer validation', type: :request do
   end
   let(:instrument_version) do
     create(:instrument_version, scoring_config: {
-      'subtests' => %w[Semelhanças Cubos], 'items_per_subtest' => 2
-    })
+             'subtests' => %w[Semelhanças Cubos], 'items_per_subtest' => 2
+           })
   end
   let(:instrument_application) do
     create(:instrument_application, assessment: assessment, applied_by: user, instrument_version: instrument_version)
@@ -17,7 +17,7 @@ RSpec.describe 'Instrument answer validation', type: :request do
 
   before { sign_in user }
 
-  it 'keeps the user on the answer form if the submission has no answer sets' do
+  it 'keeps the user on the answer form if the submission has no answer sets', :aggregate_failures do
     patch update_answers_assessment_instrument_application_path(assessment, instrument_application), params: {}
 
     expect(response).to have_http_status(:unprocessable_content)
@@ -26,7 +26,7 @@ RSpec.describe 'Instrument answer validation', type: :request do
     expect(instrument_application.answer_sets).to be_empty
   end
 
-  it 'rejects answer sets whose score fields are all blank' do
+  it 'rejects answer sets whose score fields are all blank', :aggregate_failures do
     patch update_answers_assessment_instrument_application_path(assessment, instrument_application), params: {
       answer_sets: { '0' => { subtest_name: 'Semelhanças', position: '0', answers: { '0' => '', '1' => '' } } }
     }
@@ -37,7 +37,7 @@ RSpec.describe 'Instrument answer validation', type: :request do
     expect(instrument_application.answer_sets).to be_empty
   end
 
-  it 'rejects a submission when only some subtests have scores' do
+  it 'rejects a submission when only some subtests have scores', :aggregate_failures do
     patch update_answers_assessment_instrument_application_path(assessment, instrument_application), params: {
       answer_sets: {
         '0' => { subtest_name: 'Semelhanças', position: '0', answers: { '0' => '4' } },

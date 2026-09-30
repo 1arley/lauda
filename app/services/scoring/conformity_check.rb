@@ -27,7 +27,7 @@ module Scoring
     def passed?
       expected_names = @fixture.fetch('expected').map { |row| row.fetch('subtest_name') }
       actual = results
-      actual.map { |row| row[:subtest_name] } == expected_names && actual.all? do |row|
+      actual.pluck(:subtest_name) == expected_names && actual.all? do |row|
         numeric_match?(row[:raw_score], row[:expected_raw_score]) &&
           numeric_match?(row[:scaled_score], row[:expected_scaled_score])
       end
@@ -57,10 +57,10 @@ module Scoring
     end
 
     def calculator_class
-      class_name = @instrument.code.downcase.tr('-', '_').camelize
-      "Scoring::Calculators::#{class_name}Calculator".constantize
-    rescue NameError
-      Scoring::Calculators::GenericCalculator
+      {
+        'WISC-IV' => Scoring::Calculators::WiscIvCalculator,
+        'SRS-2' => Scoring::Calculators::Srs2Calculator
+      }.fetch(@instrument.code, Scoring::Calculators::GenericCalculator)
     end
 
     def numeric_match?(actual, expected)

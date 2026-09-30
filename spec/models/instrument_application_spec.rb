@@ -4,8 +4,8 @@ RSpec.describe InstrumentApplication do
   describe '#update_answers!' do
     let(:app) do
       version = create(:instrument_version, scoring_config: {
-        'subtests' => %w[Semelhanças Cubos], 'items_per_subtest' => 2
-      })
+                         'subtests' => %w[Semelhanças Cubos], 'items_per_subtest' => 2
+                       })
       create(:instrument_application, instrument_version: version)
     end
     let(:answers) do
@@ -45,7 +45,7 @@ RSpec.describe InstrumentApplication do
       expect(app.answer_sets).to be_empty
     end
 
-    it 'rejects blank or missing scores for any subtest' do
+    it 'rejects blank or missing scores for any subtest', :aggregate_failures do
       answers['0'][:answers] = { '1' => 3 }
       answers['1'][:answers] = { '1' => '' }
 
